@@ -1,0 +1,6 @@
+@TalkReal_HostAddress = http://localhost:5115
+
+GET {{TalkReal_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
