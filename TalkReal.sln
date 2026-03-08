@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.36310.24 d17.14
+VisualStudioVersion = 17.14.36310.24
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain", "Domain\Domain.csproj", "{0618B90A-FD84-4CCC-BC98-A0AE514D58A1}"
 EndProject
@@ -10,6 +10,14 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infra", "Infra\Infra.csproj", "{05EDDBE7-A4ED-45B0-9DAE-DDC7EB10EDA7}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "API", "API\API.csproj", "{4DDA5C51-7092-460E-BB01-71CEA8FA30F4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+	ProjectSection(SolutionItems) = preProject
+		Common data\AuthController.cs = Common data\AuthController.cs
+		Common data\Extentions\DependenciesCollector.cs = Common data\Extentions\DependenciesCollector.cs
+		..\..\SaaS Tenant Manager\SaaS Tenant Manager\API\Program.cs = ..\..\SaaS Tenant Manager\SaaS Tenant Manager\API\Program.cs
+		Common data\UserService.cs = Common data\UserService.cs
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
