@@ -1,9 +1,6 @@
 using API;
 
 using Infra.Extentions;
-using Infra.Presistence;
-
-using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
@@ -16,11 +13,12 @@ if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
+app.UseRouting();
 
 app.UseMiddleware<ExceptionMiddleware>();
 app.UseHttpsRedirection();
 
-app.UseAuthorization();
+app.UseAuthentication();
 
 app.MapControllers();
 

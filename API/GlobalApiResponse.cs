@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SaaS_Tenant_Manager
+namespace GlobalApiResponse
 {
     public class GlobalApiResponse<T>
     {

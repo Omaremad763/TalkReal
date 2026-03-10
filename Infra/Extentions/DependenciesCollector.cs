@@ -1,11 +1,17 @@
 ﻿using System.Text;
 
 using Application;
+using Application.Contracts;
+
+using Domain.Entities;
 
 using FluentValidation;
 
+using Infra.Contracts_Imp;
 using Infra.Presistence;
 
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
@@ -24,11 +30,17 @@ public static class DependenciesCollector
          {
              options.UseNpgsql(DatabaseConfig);
          });
-        //services.AddScoped<ISaasServices, SaasServices>();
-        //services.AddScoped<IUnitofWork, UnitofWork>();
+        services.AddScoped<ITalkRealServices, TalkRealServices>();
+        services.AddScoped<IUnitofWork, UnitOfWork>();
         services.AddAutoMapper(cfg => {
             cfg.AddProfile<AutoMapperProfile>();
         }, typeof(AutoMapperProfile).Assembly);
+        services.AddIdentityCore<User>(options =>
+        {
+            options.Password.RequireDigit = true;
+            options.Password.RequiredLength = 8;
+            options.User.RequireUniqueEmail = true;
+        }).AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
         #region Mediator
         services.AddMediatR(cfg =>
         {
@@ -38,29 +50,29 @@ public static class DependenciesCollector
         services.AddValidatorsFromAssembly(assembly);
         #endregion
 
-        //#region Auth
-        //services.AddAuthentication(options =>
-        //{
-        //    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-        //    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-        //    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-        //})
-        // .AddJwtBearer(options =>
-        //    {
-        //        options.TokenValidationParameters = new TokenValidationParameters
-        //        {
-        //            ValidateIssuer = true,
-        //            ValidateAudience = true,
-        //            ValidateLifetime = true,
-        //            ValidateIssuerSigningKey = true,
-        //            ValidIssuer = issuer,        
-        //            ValidAudience = audience,             
-        //            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey)),
-        //            RoleClaimType = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role",
-        //            NameClaimType = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"
-        //        };
-        //    });
-        //#endregion
+        #region Auth
+        services.AddAuthentication(options =>
+        {
+            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+        })
+         .AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = issuer,
+                    ValidAudience = audience,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey)),
+                    RoleClaimType = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role",
+                    NameClaimType = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"
+                };
+            });
+        #endregion
 
         return services;
     }
