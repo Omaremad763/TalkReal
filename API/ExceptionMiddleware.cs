@@ -25,6 +25,10 @@
 
         private static Task HandleExceptionAsync(HttpContext context, Exception exception)
         {
+            if (context.Response.HasStarted)
+            {
+                return Task.CompletedTask;
+            }
             context.Response.ContentType = "application/json";
 
             var response = ApiResponse.Failure([]);

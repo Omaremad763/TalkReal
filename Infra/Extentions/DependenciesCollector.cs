@@ -14,7 +14,10 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 namespace Infra.Extentions;
 public static class DependenciesCollector
 {
@@ -31,10 +34,13 @@ public static class DependenciesCollector
              options.UseNpgsql(DatabaseConfig);
          });
         services.AddScoped<ITalkRealServices, TalkRealServices>();
+        services.AddSignalR();
+        services.AddGrpc(); 
         services.AddScoped<IUnitofWork, UnitOfWork>();
         services.AddAutoMapper(cfg => {
             cfg.AddProfile<AutoMapperProfile>();
         }, typeof(AutoMapperProfile).Assembly);
+
         services.AddIdentityCore<User>(options =>
         {
             options.Password.RequireDigit = true;
@@ -71,9 +77,26 @@ public static class DependenciesCollector
                     RoleClaimType = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role",
                     NameClaimType = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"
                 };
+                options.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
+                    {
+                        var accessToken = context.Request.Query["access_token"];
+                        var path = context.HttpContext.Request.Path;
+
+                        if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/hubs/presence"))
+                        {
+                            context.Token = accessToken;
+                        }
+                        return Task.CompletedTask;
+                    }
+                };
+
             });
+
         #endregion
 
+        services.AddGraphQLServer().AddQueryType< GraphQL>();
         return services;
     }
 }
