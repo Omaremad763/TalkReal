@@ -3,8 +3,6 @@
     using System.Net;
     using System.Text.Json;
 
-    using GlobalApiResponse;
-
     public class ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddleware> logger)
     {
         private readonly RequestDelegate _next = next;

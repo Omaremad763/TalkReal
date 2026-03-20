@@ -5,6 +5,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
+
 using TalkReal.Infrastructure.Presence;
 namespace Infra.Presistence;
 [Authorize]

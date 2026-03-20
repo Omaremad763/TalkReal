@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace GlobalApiResponse
+namespace API
 {
     public class GlobalApiResponse<T>
     {
