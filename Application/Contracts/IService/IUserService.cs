@@ -11,5 +11,7 @@ public interface IUserService
 {
     Task<string> RegistertUser(RegisterDto dto);
     Task<string> Login(LoginDto dto);
+    Task<bool> UpdateUserStatus(UpdateUserStatusDTO dto,CancellationToken CT);
+    Task<List<UserStatusDto?>> GetUserStatus(CancellationToken CT);
 
 }

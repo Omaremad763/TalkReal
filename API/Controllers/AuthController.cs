@@ -1,8 +1,6 @@
 ﻿using Application.CQRS;
 using Application.DTOS;
 
-using GlobalApiResponse;
-
 using MediatR;
 
 using Microsoft.AspNetCore.Mvc;

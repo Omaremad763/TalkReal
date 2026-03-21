@@ -11,10 +11,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infra", "Infra\Infra.csproj
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "API", "API\API.csproj", "{4DDA5C51-7092-460E-BB01-71CEA8FA30F4}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "common", "common", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
 	ProjectSection(SolutionItems) = preProject
-		Common data\Extentions\DependenciesCollector.cs = Common data\Extentions\DependenciesCollector.cs
 		..\..\SaaS Tenant Manager\SaaS Tenant Manager\API\Program.cs = ..\..\SaaS Tenant Manager\SaaS Tenant Manager\API\Program.cs
+		..\..\SaaS Tenant Manager\SaaS Tenant Manager\Infra\Contracts Implementation\Service\UserService.cs = ..\..\SaaS Tenant Manager\SaaS Tenant Manager\Infra\Contracts Implementation\Service\UserService.cs
 	EndProjectSection
 EndProject
 Global

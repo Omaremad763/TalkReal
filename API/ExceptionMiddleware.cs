@@ -3,8 +3,6 @@
     using System.Net;
     using System.Text.Json;
 
-    using GlobalApiResponse;
-
     public class ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddleware> logger)
     {
         private readonly RequestDelegate _next = next;
@@ -25,6 +23,10 @@
 
         private static Task HandleExceptionAsync(HttpContext context, Exception exception)
         {
+            if (context.Response.HasStarted)
+            {
+                return Task.CompletedTask;
+            }
             context.Response.ContentType = "application/json";
 
             var response = ApiResponse.Failure([]);

@@ -4,25 +4,34 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 using Application.Contracts;
 using Application.Contracts.IService;
 using Application.DTOS;
 
+using AutoMapper;
+
 using Domain.Entities;
 
+using Infra.Presistence;
+
+using MediatR;
+
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.Win32;
 
 namespace Infra.Contracts_Imp;
-public class UserService(IUnitofWork unitofwork) : IUserService
+public class UserService(IUnitofWork unitofwork,IMapper mapper) : IUserService
 {
     private static string GenerateJwt(User user)
     {
         var claims = new List<Claim>
         {
-        new(ClaimTypes.NameIdentifier, user.Id.ToString()),
-        new (ClaimTypes.Email, user.Email!),
+            new(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new (ClaimTypes.Email, user.Email!),
          };
 
         var Issuer = Environment.GetEnvironmentVariable("SaasJWTIssuer");
@@ -41,28 +50,47 @@ public class UserService(IUnitofWork unitofwork) : IUserService
 
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
-    public async Task<string> RegistertUser(RegisterDto dto)
+    public async Task<string?> RegistertUser(RegisterDto dto)
     {
         var user = new User
         {
-            UserName = dto.Email,
+            UserName = dto.Username,
             Email = dto.Email,
-
         };
-        var result = await unitofwork.UserRepo.CreateUserWithRoleAsync(user, dto.Password);
-        if (!result.Succeeded)
+        var result = await unitofwork.UserRepo.CreateUserAsync(user, dto.Password);
+        if (result.Errors.Any())
         {
-            return "Failed Registration. Please try again later.";
+            var errorMessages = string.Join(", ", result.Errors.Select(e => e.Description));
+            return "Failed Registration" + errorMessages;
         }
-
-        return "User Registered Successfully";
+        return null;
     }
-    public async Task<string> Login(LoginDto dto)
+    public async Task<string?> Login(LoginDto dto)
     {
         var user = await unitofwork.UserRepo.FindByEmailAsync(dto.Email);
         if (user == null || !await unitofwork.UserRepo.CheckPasswordAsync(user, dto.Password))
-            throw new UnauthorizedAccessException();
+            return null;
         return GenerateJwt(user);
-
+    }
+    public async Task<bool> UpdateUserStatus(UpdateUserStatusDTO dto, CancellationToken CT)
+    {
+        var user = await unitofwork.UserRepo.FindByidAsync(dto.UserId);
+        if (user == null)return false;
+        if (user != null)
+        {
+            user.IsOnline = dto.IsOnline;
+            user.LastSeen = DateTime.UtcNow;
+        }
+        return await unitofwork.CommitAsync() > 0;
+    }
+    public async Task<List<UserStatusDto?>> GetUserStatus(CancellationToken ct)
+    {
+        var entity = await unitofwork.UserRepo.GetUserStatus(ct);
+        if (entity != null)
+        {
+            var mapping = mapper.Map<List<UserStatusDto>>(entity);
+            return mapping;
+        }
+        return null;
     }
 }
