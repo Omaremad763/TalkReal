@@ -21,6 +21,7 @@ using MediatR;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.Win32;
 
 namespace Infra.Contracts_Imp;
 public class UserService(IUnitofWork unitofwork,IMapper mapper) : IUserService
@@ -29,8 +30,8 @@ public class UserService(IUnitofWork unitofwork,IMapper mapper) : IUserService
     {
         var claims = new List<Claim>
         {
-        new(ClaimTypes.NameIdentifier, user.Id.ToString()),
-        new (ClaimTypes.Email, user.Email!),
+            new(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new (ClaimTypes.Email, user.Email!),
          };
 
         var Issuer = Environment.GetEnvironmentVariable("SaasJWTIssuer");
@@ -49,31 +50,28 @@ public class UserService(IUnitofWork unitofwork,IMapper mapper) : IUserService
 
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
-    public async Task<string> RegistertUser(RegisterDto dto)
+    public async Task<string?> RegistertUser(RegisterDto dto)
     {
         var user = new User
         {
-            UserName = dto.Email,
+            UserName = dto.Username,
             Email = dto.Email,
-
         };
         var result = await unitofwork.UserRepo.CreateUserAsync(user, dto.Password);
-        if (!result.Succeeded)
+        if (result.Errors.Any())
         {
-            return "Failed Registration. Please try again later.";
+            var errorMessages = string.Join(", ", result.Errors.Select(e => e.Description));
+            return "Failed Registration" + errorMessages;
         }
-
-        return "User Registered Successfully";
+        return null;
     }
-    public async Task<string> Login(LoginDto dto)
+    public async Task<string?> Login(LoginDto dto)
     {
         var user = await unitofwork.UserRepo.FindByEmailAsync(dto.Email);
         if (user == null || !await unitofwork.UserRepo.CheckPasswordAsync(user, dto.Password))
-            throw new UnauthorizedAccessException();
+            return null;
         return GenerateJwt(user);
-
     }
-
     public async Task<bool> UpdateUserStatus(UpdateUserStatusDTO dto, CancellationToken CT)
     {
         var user = await unitofwork.UserRepo.FindByidAsync(dto.UserId);
@@ -85,7 +83,6 @@ public class UserService(IUnitofWork unitofwork,IMapper mapper) : IUserService
         }
         return await unitofwork.CommitAsync() > 0;
     }
-
     public async Task<List<UserStatusDto?>> GetUserStatus(CancellationToken ct)
     {
         var entity = await unitofwork.UserRepo.GetUserStatus(ct);

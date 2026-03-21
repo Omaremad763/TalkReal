@@ -6,8 +6,8 @@ using FluentValidation;
 using MediatR;
 
 namespace Application.CQRS;
-public record RegisterCommand(RegisterDto Data) : IRequest<string>;
-public record LoginCommand(LoginDto Data) : IRequest<string>;
+public record RegisterCommand(RegisterDto Data) : IRequest<string?>;
+public record LoginCommand(LoginDto Data) : IRequest<string?>;
 public  class RegistrationDtoValidator : AbstractValidator<RegisterCommand>
 {
     public RegistrationDtoValidator()
@@ -50,11 +50,11 @@ public class RegisterTenantHandler(ITalkRealServices service) :
     IRequestHandler<RegisterCommand, string>,
     IRequestHandler<LoginCommand, string>
 {
-    public async Task<string> Handle(RegisterCommand request, CancellationToken cancellationToken)
+    public async Task<string?> Handle(RegisterCommand request, CancellationToken cancellationToken)
     {
         return await service.UseService.RegistertUser(request.Data);
     }
-    public async Task<string> Handle(LoginCommand request, CancellationToken cancellationToken)
+    public async Task<string?> Handle(LoginCommand request, CancellationToken cancellationToken)
     {
         return await service.UseService.Login(request.Data);
     }
