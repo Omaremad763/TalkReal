@@ -4,7 +4,9 @@ namespace Application.Contracts;
 
     public interface ITalkRealServices
     {
-     IUserService UseService {  get; }
+         IUserService UseService {  get; }
+         IMessageService MessageService {  get; }
+         INotificationService NotificationService { get; }
     }
 
   

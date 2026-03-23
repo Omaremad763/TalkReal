@@ -14,6 +14,11 @@ public class ConversationConfiguration : IEntityTypeConfiguration<Conversation>
                .WithOne()
                .HasForeignKey(m => m.ConversationId)
                .OnDelete(DeleteBehavior.Cascade);
+        builder.Property(x => x.ParticipantAId).IsRequired().HasMaxLength(450);
+        builder.Property(x => x.ParticipantBId).IsRequired().HasMaxLength(450);
+        builder.HasIndex(x => new { x.ParticipantAId, x.ParticipantBId })
+           .IsUnique()
+           .HasDatabaseName("IX_Unique_Conversation_Participants");
     }
 }
 public class MessageConfiguration : IEntityTypeConfiguration<Message>
@@ -58,5 +63,33 @@ public class UserConversationConfiguration : IEntityTypeConfiguration<UserConver
         builder.HasOne(uc => uc.Conversation)
                .WithMany()
                .HasForeignKey(uc => uc.ConversationId);
+    }
+}
+public class OutboxMessageConfiguration : IEntityTypeConfiguration<OutboxMessage>
+{
+    public void Configure(EntityTypeBuilder<OutboxMessage> builder)
+    {
+        builder.HasKey(x => x.Id);
+
+        builder.Property(x => x.Type)
+            .IsRequired()
+            .HasMaxLength(255);
+
+        builder.Property(x => x.Content)
+            .IsRequired();
+
+        builder.Property(x => x.OccurredOnUtc)
+            .IsRequired();
+
+        builder.Property(x => x.ProcessedOnUtc)
+            .IsRequired(false);
+
+        builder.Property(x => x.Error)
+            .IsRequired(false);
+        builder.Property(x => x.ErrorCount)
+            .HasDefaultValue(0);
+
+        builder.HasIndex(x => new { x.ProcessedOnUtc, x.ErrorCount })
+            .HasDatabaseName("IX_OutboxMessages_Processing_Status");
     }
 }

@@ -17,6 +17,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
+using Quartz;
+
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 namespace Infra.Extentions;
 public static class DependenciesCollector
@@ -96,7 +98,22 @@ public static class DependenciesCollector
 
         #endregion
 
-        services.AddGraphQLServer().AddQueryType< GraphQL>();
+        #region Quartz outbox
+        services.AddQuartz(q =>
+{
+    var jobKey = new JobKey("ProcessOutboxMessagesJob");
+    q.AddJob<ProcessOutboxMessagesJob>(opts => opts.WithIdentity(jobKey));
+
+    q.AddTrigger(opts => opts
+        .ForJob(jobKey)
+        .WithIdentity("ProcessOutboxMessagesJob-trigger")
+        .WithSimpleSchedule(x => x
+            .WithIntervalInSeconds(5)
+            .RepeatForever()));
+});
+        services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true); 
+        #endregion
+
         return services;
     }
 }

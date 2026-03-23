@@ -45,7 +45,6 @@ public class LoginValidator : AbstractValidator<LoginDto>
             .WithMessage("Password must be at least 6 characters.");
     }
 }
-
 public class RegisterTenantHandler(ITalkRealServices service) :
     IRequestHandler<RegisterCommand, string>,
     IRequestHandler<LoginCommand, string>

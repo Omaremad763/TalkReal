@@ -11,13 +11,13 @@
   </ItemGroup>
 
   <ItemGroup>
-	<PackageReference Include="AutoMapper" Version="16.1.1" />
 	<PackageReference Include="FluentValidation" Version="12.1.1" />
 	<PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
 	<PackageReference Include="Grpc.AspNetCore" Version="2.76.0" />
 	<PackageReference Include="Grpc.Core.Api" Version="2.76.0" />
 	<PackageReference Include="HotChocolate" Version="15.1.12" />
 	<PackageReference Include="HotChocolate.AspNetCore" Version="15.1.12" />
+	<PackageReference Include="HotChocolate.Data" Version="15.1.12" />
 	<PackageReference Include="MediatR" Version="14.1.0" />
 	<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.0" />
 	<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.0" />
@@ -25,7 +25,11 @@
 	  <PrivateAssets>all</PrivateAssets>
 	  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 	</PackageReference>
+	<PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
 	<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.1" />
+	<PackageReference Include="Quartz" Version="3.16.1" />
+	<PackageReference Include="Quartz.Extensions.DependencyInjection" Version="3.16.1" />
+	<PackageReference Include="Quartz.Extensions.Hosting" Version="3.16.1" />
   </ItemGroup>
 
   <ItemGroup>
