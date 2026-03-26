@@ -7,8 +7,6 @@ using Domain.Events;
 
 using MediatR;
 
-using Microsoft.EntityFrameworkCore;
-
 using Newtonsoft.Json;
 
 namespace Infra.Contracts_Imp;
@@ -16,8 +14,10 @@ public class MessageService(IUnitofWork unitOfWork, IMediator mediator) : IMessa
 {
     public async Task<bool> SendMessageAsync(MessageDto dto)
     {
-        var p1 = string.Compare(dto.SenderId, dto.ReceiverId) < 0 ? dto.SenderId : dto.ReceiverId;
-        var p2 = p1 == dto.SenderId ? dto.ReceiverId : dto.SenderId;
+        try
+        {
+            var p1 = string.Compare(dto.SenderId, dto.ReceiverId) < 0 ? dto.SenderId : dto.ReceiverId;
+            var p2 = p1 == dto.SenderId ? dto.ReceiverId : dto.SenderId;
 
             var conversation = await unitOfWork.ConversationRepo.GetBetweenUsersAsync(p1, p2);
 
@@ -41,7 +41,8 @@ public class MessageService(IUnitofWork unitOfWork, IMediator mediator) : IMessa
                 ReceiverId = dto.ReceiverId,
                 Content = dto.Content,
                 SentAt = DateTime.UtcNow,
-                ConversationId = conversation.Id    
+                ConversationId = conversation.Id,
+                Status=Domain.Enum.MessageStatusEnum.Delivered
             };
 
             await unitOfWork.MessageRepo.AddMessageAsync(message);
@@ -67,12 +68,17 @@ public class MessageService(IUnitofWork unitOfWork, IMediator mediator) : IMessa
             await unitOfWork.OutboxMessagesRepo.AddOutboxMessageAsync(outboxMessage);
             await unitOfWork.CommitAsync();
             return true;
+        }
+        catch (Exception)
+        {
+            return false;
+        }
     }
 
     public  IQueryable<MessageDto> GetChatHistoryQuery(ChatHistoryRequestDto criteria)
     {
         var query = unitOfWork.MessageRepo.GetChatHistory(criteria);
-        return query.Select(m => new MessageDto
+        var mapping= query.Select(m => new MessageDto
         {
             Id = m.Id,
             SenderId = m.SenderId,
@@ -82,6 +88,7 @@ public class MessageService(IUnitofWork unitOfWork, IMediator mediator) : IMessa
             SentAt = m.SentAt,
             Status = m.Status
         });
+        return mapping;
 
     }
 

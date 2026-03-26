@@ -14,6 +14,7 @@ builder.Services.AddGraphQLServer()
     .AddSorting()
     .AddProjections();
 builder.Services.AddScoped<GraphQLApis>();
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("VercelPolicy", policy =>

@@ -2,6 +2,7 @@
 
 using Application;
 using Application.Contracts;
+using Application.Contracts.IService;
 
 using Domain.Entities;
 
@@ -25,6 +26,17 @@ public static class DependenciesCollector
 {
     public static IServiceCollection AddServices(this IServiceCollection services)
     {
+        var CloudinaryName = Environment.GetEnvironmentVariable("CloudinaryName");
+        var CloudinaryApiKey = Environment.GetEnvironmentVariable("CloudinaryApiKey");
+        var CloudinaryApiSecret = Environment.GetEnvironmentVariable("CloudinaryApiSecret");
+        var account = new CloudinaryDotNet.Account(
+        CloudinaryName,
+        CloudinaryApiKey,
+        CloudinaryApiSecret
+        );
+        services.AddTransient<CloudinaryDotNet.Cloudinary>(_ => new CloudinaryDotNet.Cloudinary(account));
+        services.AddScoped<ICloudinaryService, CloudinaryService>();
+
         var issuer = Environment.GetEnvironmentVariable("SaasJWTIssuer");
         var audience = Environment.GetEnvironmentVariable("SaasJWTAudience");
         var jwtKey = Environment.GetEnvironmentVariable("SaasJwtKey");
@@ -36,6 +48,7 @@ public static class DependenciesCollector
              options.UseNpgsql(DatabaseConfig);
          });
         services.AddScoped<ITalkRealServices, TalkRealServices>();
+        services.AddSignalR();
         services.AddSignalR();
         services.AddGrpc(); 
         services.AddScoped<IUnitofWork, UnitOfWork>();

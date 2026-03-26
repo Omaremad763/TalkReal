@@ -13,13 +13,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Application.CQRS;
 
-public record UpdateUserCommand(UpdateUserStatusDTO DTO) : IRequest<bool>;
+public record UpdateUserStatusCommand(UpdateUserStatusDTO DTO) : IRequest<bool>;
 public record GetOnlineUsersQuery() : IRequest<List<UserStatusDto>>;
 public class PresenceHandler(ITalkRealServices services) :
-    IRequestHandler<UpdateUserCommand,bool>,
+    IRequestHandler<UpdateUserStatusCommand,bool>,
     IRequestHandler<GetOnlineUsersQuery, List<UserStatusDto>>
 {
-    public async Task<bool> Handle(UpdateUserCommand request, CancellationToken ct)
+    public async Task<bool> Handle(UpdateUserStatusCommand request, CancellationToken ct)
     {
         return await services.UseService.UpdateUserStatus(request.DTO, ct);
     }

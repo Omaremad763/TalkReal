@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 
 using Application.DTOS;
 
+using Domain.Entities;
+
 namespace Application.Contracts.IService;
 public interface IUserService
 {
@@ -13,5 +15,8 @@ public interface IUserService
     Task<string> Login(LoginDto dto);
     Task<bool> UpdateUserStatus(UpdateUserStatusDTO dto,CancellationToken CT);
     Task<List<UserStatusDto?>> GetUserStatus(CancellationToken CT);
+    Task<bool> UpdateProfileImageAsync(Guid id, string imageUrl);
+    Task<User?> GetUserByidAsync(Guid Id);
 
+    Task<bool> DeleteImagetById(Guid userid);
 }

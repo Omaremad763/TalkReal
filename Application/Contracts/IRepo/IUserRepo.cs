@@ -19,4 +19,6 @@ public interface IUserRepo
     Task<User?> FindByEmailAsync(string Email);
     Task<User?> FindByidAsync(Guid Id);
     Task<List<User>> GetUserStatus(CancellationToken CT);
+    Task<User?> GetUserByidAsync(Guid Id);
+    Task<bool> DeleteImagetById(Guid userid);
 }

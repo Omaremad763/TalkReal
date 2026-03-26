@@ -9,6 +9,8 @@ using Application.Contracts.IService;
 
 using AutoMapper;
 
+using CloudinaryDotNet;
+
 using Infra.Presistence;
 
 using MediatR;

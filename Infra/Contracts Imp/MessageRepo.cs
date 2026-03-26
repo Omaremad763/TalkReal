@@ -20,8 +20,8 @@ public class MessageRepo(ApplicationDbContext context) : IMessageRepo
         return context.Messages
             .AsNoTracking()
             .Where(m =>
-                (m.SenderId == criteria.UserId && m.ReceiverId == criteria.OtherUserId) ||
-                (m.SenderId == criteria.OtherUserId && m.ReceiverId == criteria.UserId))
+                (m.SenderId == criteria.senderid && m.ReceiverId == criteria.receiverId) ||
+                (m.SenderId == criteria.receiverId && m.ReceiverId == criteria.senderid))
             .OrderByDescending(m => m.SentAt)
             .Take(criteria.Take);
     }

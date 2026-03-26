@@ -21,7 +21,7 @@ public MessageStatusEnum Status { get; init; }
 }
 
 public record ChatHistoryRequestDto(
-    string UserId,
-    string OtherUserId,
+    string senderid,
+    string receiverId,
     int Take = 50
 );
