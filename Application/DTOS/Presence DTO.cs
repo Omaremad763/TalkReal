@@ -14,7 +14,10 @@ public record UserStatusDto
 {
     public UserStatusDto() { }
     public Guid UserId { get; init; }
-    public string Username { get; init; } = string.Empty;
+    public string UserName { get; init; } = string.Empty;
     public bool IsOnline { get; init; }
     public DateTime LastSeen { get; init; }
+    public string? ProfileImageUrl { get; set; }
+
+
 }

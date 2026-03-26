@@ -20,20 +20,20 @@ public class PresenceHub(IMediator mediator) : Hub
             UserId = userId,
             IsOnline =true
         };
-        await _mediator.Send(new UpdateUserCommand(dto));
+        await _mediator.Send(new UpdateUserStatusCommand(dto));
         await Clients.Others.SendAsync("UserStatusChanged", userId, true);
         await base.OnConnectedAsync();
     }
     public override async Task OnDisconnectedAsync(Exception? exception)
     {
         var userId = Guid.Parse(Context.UserIdentifier!);
+        await Task.Delay(5000);
         UpdateUserStatusDTO dto = new()
         {
             UserId = userId,
             IsOnline = false
         };
-        await _mediator.Send(new UpdateUserCommand(dto));
-
+        await _mediator.Send(new UpdateUserStatusCommand(dto));
         await Clients.Others.SendAsync("UserStatusChanged", userId, false);
         await base.OnDisconnectedAsync(exception);
     }
@@ -45,12 +45,8 @@ public class PresenceGrpcService(ApplicationDbContext context) : PresenceProto.P
 
     private readonly ApplicationDbContext _context = context;
     public override async Task<UserStatusResponse> GetUserStatus(UserStatusRequest request, ServerCallContext context)
-
     {
-
         var user = await _context.Users.AsNoTracking().FirstOrDefaultAsync(u => u.Id == Guid.Parse(request.UserId));
-
-
         return new UserStatusResponse { IsOnline = user?.IsOnline ?? false };
 
     }

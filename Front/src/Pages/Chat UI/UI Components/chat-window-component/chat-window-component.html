@@ -1,0 +1,75 @@
+<div class="flex flex-col h-full bg-blue-50 relative overflow-hidden font-sans">
+  <div
+    class="absolute inset-0 opacity-[0.02] bg-[linear-gradient(to_right,#2563eb_1px,transparent_1px),linear-gradient(to_bottom,#2563eb_1px,transparent_1px)] bg-size-[40px_40px] pointer-events-none"
+  ></div>
+
+  <div
+    class="px-6 py-4 bg-white border-b border-blue-100 flex items-center justify-between z-10 shadow-sm"
+  >
+    <div class="flex items-center gap-3">
+      <div
+        class="w-10 h-10 bg-blue-600 flex items-center justify-center text-white font-bold shadow-sm"
+      >
+        {{ senderid.substring(0, 1).toUpperCase() }}
+      </div>
+      <div>
+        <h3 class="font-bold text-slate-800 text-sm">Active Chat</h3>
+        <span
+          class="flex items-center gap-1 text-[10px] text-green-600 font-bold uppercase tracking-wider"
+        >
+          <span class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span> Synchronized
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <div class="flex-1 overflow-y-auto p-6 space-y-1 custom-scrollbar z-0 bg-white/50">
+    <app-message-bubble
+      *ngFor="let msg of messages"
+      [message]="msg"
+      [currentUserId]="senderid"
+      class="block"
+    >
+    </app-message-bubble>
+  </div>
+
+  <div class="p-6 bg-transparent z-10">
+    <div
+      class="max-w-4xl mx-auto flex items-center gap-3 bg-white p-2 pl-5 border border-blue-100 shadow-lg shadow-blue-900/5"
+    >
+      <button class="text-slate-400 hover:text-blue-600 transition-colors">
+        <span class="text-xl">⊕</span>
+      </button>
+
+      <input
+        [(ngModel)]="newMessage"
+        (keyup.enter)="sendMessage()"
+        type="text"
+        placeholder="Type your message here..."
+        class="flex-1 border-none bg-transparent py-3 text-sm focus:ring-0 placeholder-slate-400 text-slate-700 font-medium"
+      />
+
+      <button
+        (click)="sendMessage()"
+        [disabled]="!newMessage.trim()"
+        class="bg-blue-600 text-white p-3 px-6 hover:bg-blue-700 transition-all active:scale-95 disabled:bg-slate-300 disabled:cursor-not-allowed flex items-center gap-2 group"
+      >
+        <span class="font-bold text-xs tracking-widest uppercase">Send</span>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-4 w-4"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
+          />
+        </svg>
+      </button>
+    </div>
+  </div>
+</div>

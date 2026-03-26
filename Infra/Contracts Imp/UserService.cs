@@ -32,6 +32,7 @@ public class UserService(IUnitofWork unitofwork,IMapper mapper) : IUserService
         {
             new(ClaimTypes.NameIdentifier, user.Id.ToString()),
             new (ClaimTypes.Email, user.Email!),
+            new (ClaimTypes.Name, user.UserName!),
          };
 
         var Issuer = Environment.GetEnvironmentVariable("SaasJWTIssuer");
@@ -86,11 +87,41 @@ public class UserService(IUnitofWork unitofwork,IMapper mapper) : IUserService
     public async Task<List<UserStatusDto?>> GetUserStatus(CancellationToken ct)
     {
         var entity = await unitofwork.UserRepo.GetUserStatus(ct);
+        var mapping = new List<UserStatusDto>(); ;
         if (entity != null)
         {
-            var mapping = mapper.Map<List<UserStatusDto>>(entity);
+           foreach(var user in entity)
+            {
+                mapping.Add(new UserStatusDto
+                {
+                    UserId = user.Id,
+                    UserName = user.UserName,
+                    IsOnline = user.IsOnline,
+                    LastSeen = user.LastSeen,
+                    ProfileImageUrl = user.ProfileImageUrl,
+                });
+            }
             return mapping;
         }
         return null;
+    }
+    public async Task<bool> UpdateProfileImageAsync(Guid id, string imageUrl)
+    {
+        var user = await unitofwork.UserRepo.FindByidAsync(id);
+        if (user == null)
+            return false;
+
+        user.ProfileImageUrl = imageUrl;
+        await unitofwork.CommitAsync();
+        return true;
+    }
+    public async Task<User?> GetUserByidAsync(Guid Id)
+    {
+        return await unitofwork.UserRepo.GetUserByidAsync(Id);
+    }
+
+    public async Task<bool> DeleteImagetById(Guid userid)
+    {
+        return await unitofwork.UserRepo.DeleteImagetById(userid);
     }
 }

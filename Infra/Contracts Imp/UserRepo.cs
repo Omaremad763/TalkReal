@@ -37,9 +37,25 @@ public class UserRepo(UserManager<User> _userManager,ApplicationDbContext Contex
     {
         return await Context.Users.FindAsync(Id);
     }
+    public async Task<User?> GetUserByidAsync(Guid Id)
+    {
+        return await Context.Users.FirstOrDefaultAsync(x => x.Id == Id);
+    }
 
     public async Task<List<User>> GetUserStatus( CancellationToken CT)
     {
         return await Context.Users.AsNoTracking().ToListAsync(CT);
+    }
+
+    public async Task<bool> DeleteImagetById(Guid userid)
+    {
+        var getuser = await GetUserByidAsync(userid);
+        if (getuser != null) 
+        { 
+            getuser.ProfileImageUrl = null;
+            Context.SaveChanges();
+            return true;
+        };
+        return false;
     }
 }

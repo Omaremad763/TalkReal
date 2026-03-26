@@ -2,6 +2,7 @@
 
 using Application;
 using Application.Contracts;
+using Application.Contracts.IService;
 
 using Domain.Entities;
 
@@ -17,12 +18,25 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
+using Quartz;
+
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 namespace Infra.Extentions;
 public static class DependenciesCollector
 {
     public static IServiceCollection AddServices(this IServiceCollection services)
     {
+        var CloudinaryName = Environment.GetEnvironmentVariable("CloudinaryName");
+        var CloudinaryApiKey = Environment.GetEnvironmentVariable("CloudinaryApiKey");
+        var CloudinaryApiSecret = Environment.GetEnvironmentVariable("CloudinaryApiSecret");
+        var account = new CloudinaryDotNet.Account(
+        CloudinaryName,
+        CloudinaryApiKey,
+        CloudinaryApiSecret
+        );
+        services.AddTransient<CloudinaryDotNet.Cloudinary>(_ => new CloudinaryDotNet.Cloudinary(account));
+        services.AddScoped<ICloudinaryService, CloudinaryService>();
+
         var issuer = Environment.GetEnvironmentVariable("SaasJWTIssuer");
         var audience = Environment.GetEnvironmentVariable("SaasJWTAudience");
         var jwtKey = Environment.GetEnvironmentVariable("SaasJwtKey");
@@ -34,6 +48,7 @@ public static class DependenciesCollector
              options.UseNpgsql(DatabaseConfig);
          });
         services.AddScoped<ITalkRealServices, TalkRealServices>();
+        services.AddSignalR();
         services.AddSignalR();
         services.AddGrpc(); 
         services.AddScoped<IUnitofWork, UnitOfWork>();
@@ -96,7 +111,22 @@ public static class DependenciesCollector
 
         #endregion
 
-        services.AddGraphQLServer().AddQueryType< GraphQL>();
+        #region Quartz outbox
+        services.AddQuartz(q =>
+{
+    var jobKey = new JobKey("ProcessOutboxMessagesJob");
+    q.AddJob<ProcessOutboxMessagesJob>(opts => opts.WithIdentity(jobKey));
+
+    q.AddTrigger(opts => opts
+        .ForJob(jobKey)
+        .WithIdentity("ProcessOutboxMessagesJob-trigger")
+        .WithSimpleSchedule(x => x
+            .WithIntervalInSeconds(5)
+            .RepeatForever()));
+});
+        services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true); 
+        #endregion
+
         return services;
     }
 }

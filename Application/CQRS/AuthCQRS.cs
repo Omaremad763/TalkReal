@@ -1,9 +1,12 @@
 ﻿using Application.Contracts;
+using Application.Contracts.IService;
 using Application.DTOS;
 
 using FluentValidation;
 
 using MediatR;
+
+using Microsoft.AspNetCore.Http;
 
 namespace Application.CQRS;
 public record RegisterCommand(RegisterDto Data) : IRequest<string?>;
@@ -45,8 +48,7 @@ public class LoginValidator : AbstractValidator<LoginDto>
             .WithMessage("Password must be at least 6 characters.");
     }
 }
-
-public class RegisterTenantHandler(ITalkRealServices service) :
+public class AuthHandler(ITalkRealServices service) :
     IRequestHandler<RegisterCommand, string>,
     IRequestHandler<LoginCommand, string>
 {
