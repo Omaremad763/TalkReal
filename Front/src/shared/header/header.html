@@ -1,0 +1,85 @@
+<header
+  class="h-20 bg-white border-b border-blue-100 px-8 flex items-center justify-between shadow-sm sticky top-0 z-50"
+>
+  <h1 class="text-xl font-black text-blue-900 tracking-tighter uppercase">
+    {{ title }}
+  </h1>
+
+  <div class="relative flex items-center gap-4 group">
+    <div
+      (click)="toggleMenu()"
+      class="w-16 h-16 rounded-full overflow-hidden cursor-pointer bg-blue-600 flex items-center justify-center hover:scale-105 transition"
+    >
+      <!-- user image -->
+      <img
+        *ngIf="ImageURL; else noImage"
+        [src]="ImageURL"
+        alt="profile"
+        class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+      />
+
+      <!-- fallback -->
+      <ng-template #noImage>
+        <span class="text-white font-semibold text-sm uppercase">
+          {{ username.charAt(0) }}
+        </span>
+      </ng-template>
+    </div>
+  </div>
+
+  <div
+    *ngIf="menuOpened"
+    class="absolute right-0 top-14 w-56 bg-white border border-blue-100 shadow-xl shadow-blue-900/10 py-2 z-60 animate-in fade-in slide-in-from-top-2 duration-200"
+  >
+    <button
+      (click)="imageUploader.triggerUpload()"
+      class="w-full px-4 py-3 text-left text-sm font-bold text-slate-700 hover:bg-blue-50 hover:text-blue-700 flex items-center gap-3 transition-colors uppercase tracking-wider"
+    >
+      <span class="text-lg">⊕</span>
+      {{ ImageURL ? 'Change Photo' : 'Add Photo' }}
+    </button>
+    <app-image-upload #imageUploader (imageReady)="handleImageUpload($event)"> </app-image-upload>
+    <button
+      *ngIf="ImageURL"
+      (click)="deletePhoto()"
+      class="w-full px-4 py-3 text-left text-sm font-bold text-slate-600 hover:bg-red-50 hover:text-red-600 flex items-center gap-3 transition-colors uppercase tracking-wider"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="h-4 w-4"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+        />
+      </svg>
+      Remove Photo
+    </button>
+    <div class="h-px bg-blue-50 my-1"></div>
+    <button
+      (click)="logout()"
+      class="w-full px-4 py-3 text-left text-sm font-bold text-red-500 hover:bg-red-50 flex items-center gap-3 transition-colors uppercase tracking-wider"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="h-4 w-4"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+        />
+      </svg>
+      Logout
+    </button>
+  </div>
+</header>

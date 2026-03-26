@@ -3,7 +3,7 @@ import { Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import Swal from 'sweetalert2';
-import { PresenceService } from '../../../core/core services/signalR-service';
+import { MessagingService } from '../../../core/core services/messaging-service';
 import { AuthPhotoComponent } from '../../../shared/Background_Photo/background';
 import * as AuthDtos from '../../../shared/shared_models/Auth-models';
 import { AuthService } from '../../../shared/shared_services/auth.service';
@@ -16,7 +16,7 @@ import { AuthService } from '../../../shared/shared_services/auth.service';
 export class LoginComponent {
   private fb = inject(FormBuilder);
   private auth = inject(AuthService);
-  private presence = inject(PresenceService);
+  private presence = inject(MessagingService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
 
@@ -50,10 +50,9 @@ export class LoginComponent {
           timerProgressBar: true,
           showConfirmButton: false,
         }).then(() => {
-          const ChatUI = this.route.snapshot.queryParams['returnUrl'] || '/ChatUI';
+          const ChatUI = this.route.snapshot.queryParams['returnUrl'] || '/ChatPage';
           this.auth.extractAndSaveClaims(res);
-          this.presence.createHubConnection(res);
-          // this.router.navigateByUrl(ChatUI, { replaceUrl: true });
+          this.router.navigateByUrl(ChatUI, { replaceUrl: true });
         });
       },
       error: (err) => {

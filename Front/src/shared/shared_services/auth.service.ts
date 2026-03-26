@@ -7,7 +7,8 @@ import { ApiResponse } from '../../shared/shared_models/api-response.model';
 import * as AuthDtos from '../shared_models/Auth-models';
 export interface UserState {
   userId: string;
-  username: string;
+  userEmail: string;
+  userName: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -68,10 +69,12 @@ export class AuthService {
       const payload = JSON.parse(decodeURIComponent(escape(payloadJson)));
       const idClaim = 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier';
       const emailClaim = 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress';
+      const userNameClaim = 'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name';
 
       const userState: UserState = {
         userId: payload[idClaim],
-        username: payload[emailClaim],
+        userEmail: payload[emailClaim],
+        userName: payload[userNameClaim],
       };
       this.currentUser.set(userState);
       localStorage.setItem('user_data', JSON.stringify(userState));
