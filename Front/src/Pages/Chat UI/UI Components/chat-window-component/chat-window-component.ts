@@ -19,10 +19,11 @@ export class ChatWindowComponent {
   private authService = inject(AuthService);
   private QraphQlService = inject(QraphQlService);
 
-  receiverid = input<string>('');
+  receiverid = input.required<string>();
   @Input() senderid!: string;
 
   messages: messagedto.MessageDto[] = [];
+  selectedFile: File | null = null;
   newMessage = '';
 
   // ngOnChanges(changes: SimpleChanges): void {
@@ -50,24 +51,32 @@ export class ChatWindowComponent {
     });
   }
   sendMessage() {
-    if (!this.newMessage.trim()) return;
+    if (!this.newMessage.trim() && !this.selectedFile) return;
     const user = this.authService.currentUser();
     if (!user || !this.receiverid) {
       console.error('Missing Sender or Receiver ID');
       return;
     }
-    const message: messagedto.MessageDto = {
+    const MessageData = new FormData();
+    MessageData.append('senderId', user.userId);
+    MessageData.append('receiverId', this.receiverid());
+    MessageData.append('content', this.newMessage || '');
+    if (this.selectedFile) {
+      MessageData.append('file', this.selectedFile);
+    }
+    const localMessage: any = {
       senderId: user.userId,
       receiverId: this.receiverid,
-      content: this.newMessage,
-      sentAt: new Date(),
+      content: this.newMessage || (this.selectedFile ? 'Sending attachment...' : ''),
+      sentAt: new Date().toISOString(),
       status: messagedto.MessageStatusEnum.Pending,
-    } as any;
-
-    this.messagingService.sendmessage(message).subscribe({
+      attachmentUrl: this.selectedFile ? URL.createObjectURL(this.selectedFile) : null,
+    };
+    this.messagingService.sendmessage(MessageData).subscribe({
       next: () => {
-        this.messages.push(message);
+        this.messages.push(localMessage);
         this.newMessage = '';
+        this.selectedFile = null;
         this.loadHistory();
       },
       error: (err) => {
@@ -86,5 +95,11 @@ export class ChatWindowComponent {
         });
       },
     });
+  }
+  onFileSelected(event: any) {
+    const file = event.target.files[0];
+    if (file) {
+      this.selectedFile = file;
+    }
   }
 }

@@ -5,7 +5,6 @@ import { LogLevel } from '@microsoft/signalr';
 import { BehaviorSubject, map, Observable } from 'rxjs';
 import { environment } from '../../environment';
 import { ApiResponse } from '../../shared/shared_models/api-response.model';
-import * as messagedto from '../core-models';
 
 @Injectable({ providedIn: 'root' })
 export class MessagingService {
@@ -14,7 +13,6 @@ export class MessagingService {
   onlineUsers = signal<string[]>([]);
   private http = inject(HttpClient);
   public isConnected = new BehaviorSubject<boolean>(false);
-  constructor() {}
   createHubConnection(token: string) {
     this.hubConnection = new signalR.HubConnectionBuilder()
       .withUrl(`https://localhost:7260/hubs/presence`, {
@@ -49,7 +47,7 @@ export class MessagingService {
   stopHubConnection() {
     this.hubConnection?.stop().catch((error) => console.log('Error stopping Hub:', error));
   }
-  sendmessage(data: messagedto.MessageDto): Observable<boolean> {
+  sendmessage(data: FormData): Observable<boolean> {
     return this.http
       .post<ApiResponse<boolean>>(`${this.baseUrl}/SendMessage`, data)
       .pipe(map((res) => res.data));

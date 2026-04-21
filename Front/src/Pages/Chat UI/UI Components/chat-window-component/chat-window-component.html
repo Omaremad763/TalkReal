@@ -3,6 +3,7 @@
     class="absolute inset-0 opacity-[0.02] bg-[linear-gradient(to_right,#2563eb_1px,transparent_1px),linear-gradient(to_bottom,#2563eb_1px,transparent_1px)] bg-size-[40px_40px] pointer-events-none"
   ></div>
 
+  <!-- MessagingArea -->
   <div
     class="px-6 py-4 bg-white border-b border-blue-100 flex items-center justify-between z-10 shadow-sm"
   >
@@ -33,43 +34,81 @@
     </app-message-bubble>
   </div>
 
+  <!-- MessageSending -->
   <div class="p-6 bg-transparent z-10">
-    <div
-      class="max-w-4xl mx-auto flex items-center gap-3 bg-white p-2 pl-5 border border-blue-100 shadow-lg shadow-blue-900/5"
-    >
-      <button class="text-slate-400 hover:text-blue-600 transition-colors">
-        <span class="text-xl">⊕</span>
-      </button>
-
-      <input
-        [(ngModel)]="newMessage"
-        (keyup.enter)="sendMessage()"
-        type="text"
-        placeholder="Type your message here..."
-        class="flex-1 border-none bg-transparent py-3 text-sm focus:ring-0 placeholder-slate-400 text-slate-700 font-medium"
-      />
-
-      <button
-        (click)="sendMessage()"
-        [disabled]="!newMessage.trim()"
-        class="bg-blue-600 text-white p-3 px-6 hover:bg-blue-700 transition-all active:scale-95 disabled:bg-slate-300 disabled:cursor-not-allowed flex items-center gap-2 group"
-      >
-        <span class="font-bold text-xs tracking-widest uppercase">Send</span>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          class="h-4 w-4"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
+    <div class="max-w-4xl mx-auto flex flex-col gap-2">
+      <!-- معاينة الملف المختار قبل الإرسال (اختياري) -->
+      @if (selectedFile) {
+        <div
+          class="flex items-center gap-2 bg-blue-50 p-2 px-4 border-l-4 border-blue-600 animate-in fade-in slide-in-from-bottom-2"
         >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
-          />
-        </svg>
-      </button>
+          <span class="text-xs font-bold text-blue-700 truncate max-w-50"
+            >📎 {{ selectedFile.name }}</span
+          >
+          <button
+            (click)="selectedFile = null"
+            class="text-red-500 hover:text-red-700 text-xs font-bold uppercase tracking-tighter"
+          >
+            Cancel
+          </button>
+        </div>
+      }
+
+      <div
+        class="flex items-center gap-3 bg-white p-2 pl-5 border border-blue-100 shadow-lg shadow-blue-900/5"
+      >
+        <!-- زر المرفقات -->
+        <button
+          (click)="fileInput.click()"
+          type="button"
+          class="text-slate-400 hover:text-blue-600 transition-all duration-200 flex items-center justify-center w-10 h-10 rounded-full hover:bg-blue-50 group/attach"
+          title="Attach a file"
+        >
+          <i
+            class="fa-solid fa-paperclip text-xl transform group-hover/attach:rotate-12 transition-transform"
+          ></i>
+        </button>
+
+        <!-- Input الملفات المخفي -->
+        <input
+          #fileInput
+          type="file"
+          (change)="onFileSelected($event)"
+          class="hidden"
+          accept="image/*,video/*,application/pdf"
+        />
+
+        <input
+          [(ngModel)]="newMessage"
+          (keyup.enter)="sendMessage()"
+          type="text"
+          placeholder="Type your message here..."
+          class="flex-1 border-none bg-transparent py-3 text-sm focus:ring-0 placeholder-slate-400 text-slate-700 font-medium"
+        />
+
+        <!-- زر الإرسال المحدث -->
+        <button
+          (click)="sendMessage()"
+          [disabled]="!newMessage.trim() && !selectedFile"
+          class="bg-blue-600 text-white p-3 px-6 hover:bg-blue-700 transition-all active:scale-95 disabled:bg-slate-300 disabled:cursor-not-allowed flex items-center gap-2 group"
+        >
+          <span class="font-bold text-xs tracking-widest uppercase">Send</span>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-4 w-4 transform group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
+            />
+          </svg>
+        </button>
+      </div>
     </div>
   </div>
 </div>

@@ -6,6 +6,8 @@ export interface MessageDto {
   content: string;
   sentAt: string;
   status: MessageStatusEnum;
+  file: File;
+  attachmentUrl: string;
 }
 export enum MessageStatusEnum {
   Pending = 0,

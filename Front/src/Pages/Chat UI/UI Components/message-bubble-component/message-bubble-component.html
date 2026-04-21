@@ -1,43 +1,65 @@
 <div
-  class="flex w-full mb-3"
+  class="flex w-full mb-3 animate-in fade-in slide-in-from-bottom-1"
   [ngClass]="{
     'justify-end': isMine(),
     'justify-start': !isMine(),
   }"
 >
   <div
-    class="max-w-[80%] px-4 py-2.5 shadow-sm border"
+    class="max-w-[80%] shadow-sm border overflow-hidden"
     [ngClass]="{
       'bg-blue-600 text-white border-blue-700 rounded-lg rounded-tr-none': isMine(),
       'bg-blue-50 text-slate-800 border-blue-100 rounded-lg rounded-tl-none': !isMine(),
     }"
   >
-    <p class="text-[13px] leading-relaxed wrap-break-word font-medium">
-      {{ message.content }}
-    </p>
-
-    <div
-      class="flex items-center gap-1 mt-1 justify-end opacity-70"
-      [ngClass]="isMine() ? 'text-blue-50' : 'text-slate-500'"
-    >
-      <span class="text-[9px] font-bold tracking-tighter uppercase">
-        {{ message.sentAt | date: 'shortTime' }}
-      </span>
-
-      @if (isMine()) {
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          class="h-3 w-3"
-          viewBox="0 0 20 20"
-          fill="currentColor"
-        >
-          <path
-            fill-rule="evenodd"
-            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-            clip-rule="evenodd"
+    <!-- عرض الصورة (المرفق) -->
+    @if (message.attachmentUrl) {
+      <div class="p-1 pb-0">
+        <div class="relative group cursor-pointer overflow-hidden rounded-md bg-slate-200/20">
+          <img
+            [src]="message.attachmentUrl"
+            class="max-w-full h-auto max-h-72 object-cover block transition-transform duration-500 group-hover:scale-105"
+            alt="Attachment"
+            loading="lazy"
           />
-        </svg>
+          <!-- Overlay بسيط يظهر عند الوقوف على الصورة -->
+          <div class="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors"></div>
+        </div>
+      </div>
+    }
+
+    <!-- محتوى الرسالة النصي -->
+    <div class="px-4 py-2.5">
+      @if (message.content) {
+        <p class="text-[13px] leading-relaxed wrap-break-word font-medium">
+          {{ message.content }}
+        </p>
       }
+
+      <div
+        class="flex items-center gap-1 mt-1 justify-end opacity-70"
+        [ngClass]="isMine() ? 'text-blue-50' : 'text-slate-500'"
+      >
+        <span class="text-[9px] font-bold tracking-tighter uppercase">
+          {{ message.sentAt | date: 'shortTime' }}
+        </span>
+
+        @if (isMine()) {
+          <!-- أيقونة الـ Check لتأكيد الإرسال -->
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-3 w-3"
+            viewBox="0 0 20 20"
+            fill="currentColor"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+              clip-rule="evenodd"
+            />
+          </svg>
+        }
+      </div>
     </div>
   </div>
 </div>

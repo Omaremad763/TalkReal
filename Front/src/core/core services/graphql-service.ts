@@ -46,6 +46,7 @@ export class QraphQlService {
         content
         sentAt
         status
+        attachmentUrl
       }
     }
   `;
