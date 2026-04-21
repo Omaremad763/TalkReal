@@ -18,13 +18,17 @@ using MediatR;
 using Microsoft.AspNetCore.SignalR;
 
 namespace Infra.Contracts_Imp;
-public class TalkRealServices(IUnitofWork unitofWork,IMapper mapper,IMediator mediator,
-    IHubContext<PresenceHub> hubContext
+public class TalkRealServices(IUnitofWork unitofWork,
+    IMapper mapper,
+    IMediator mediator,
+    IHubContext<PresenceHub> hubContext,
+    ICloudinaryService CloudinaryService
     ) : ITalkRealServices
 {
     public IUserService UseService =>  new UserService(unitofWork, mapper);
 
-    public IMessageService MessageService =>  new MessageService(unitofWork, mediator);
+    public IMessageService MessageService =>  new MessageService(unitofWork, mediator, CloudinaryService);
 
     public INotificationService NotificationService =>  new NotificationService(hubContext);
+    public IAttachmentService AttachmentService =>  new AttachmentService(unitofWork,hubContext);
 }

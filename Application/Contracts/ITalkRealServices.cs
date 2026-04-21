@@ -7,6 +7,7 @@ namespace Application.Contracts;
          IUserService UseService {  get; }
          IMessageService MessageService {  get; }
          INotificationService NotificationService { get; }
+         IAttachmentService AttachmentService { get; }
     }
 
   

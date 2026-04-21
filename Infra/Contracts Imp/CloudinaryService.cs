@@ -15,7 +15,7 @@ namespace Infra.Contracts_Imp;
     {
       _cloudinary = cloudinary;
     }
-    public async Task<string> UploadPhotoAsync(IFormFile file)
+    public async Task<ImageUploadResult?> UploadFileAsync(IFormFile file)
     {
       if (file.Length == 0)
       {
@@ -27,6 +27,7 @@ namespace Infra.Contracts_Imp;
       var uploadParams = new ImageUploadParams()
       {
         File = new FileDescription(file.FileName, stream),
+        Folder = "chat-attachments"
       };
 
       var uploadResult = await _cloudinary.UploadAsync(uploadParams);
@@ -36,7 +37,7 @@ namespace Infra.Contracts_Imp;
         throw new Exception(uploadResult.Error.Message);
       }
 
-      return uploadResult.SecureUrl.ToString();
+        return uploadResult;
     }
   }
 

@@ -7,6 +7,10 @@ using System.Threading.Tasks;
 using Domain.Entities;
 using Domain.Enum;
 
+using HotChocolate;
+
+using Microsoft.AspNetCore.Http;
+
 namespace Application.DTOS;
 public class MessageDto
 {
@@ -18,6 +22,9 @@ public Guid ConversationId { get; init; }
 public string Content { get; init; }
 public DateTime SentAt { get; init; }
 public MessageStatusEnum Status { get; init; }
+[GraphQLIgnore]
+ public IFormFile? File { get; init; }
+ public string? attachmentUrl { get; init; }
 }
 
 public record ChatHistoryRequestDto(

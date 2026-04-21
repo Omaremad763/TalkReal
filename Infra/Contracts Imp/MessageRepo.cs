@@ -19,10 +19,17 @@ public class MessageRepo(ApplicationDbContext context) : IMessageRepo
     {
         return context.Messages
             .AsNoTracking()
+            .Include(m => m.Attachment)
             .Where(m =>
                 (m.SenderId == criteria.senderid && m.ReceiverId == criteria.receiverId) ||
                 (m.SenderId == criteria.receiverId && m.ReceiverId == criteria.senderid))
             .OrderByDescending(m => m.SentAt)
             .Take(criteria.Take);
     }
+
+    public async Task<Message?> GetMessageByPublicIdAsync(string publicId)
+    {
+        return await context.Messages.FirstOrDefaultAsync(m => m.Attachment != null && m.Attachment.PublicId == publicId);
+    }
+
 }

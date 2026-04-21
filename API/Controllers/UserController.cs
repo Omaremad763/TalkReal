@@ -5,12 +5,14 @@ using Domain.Entities;
 
 using MediatR;
 
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
 [Route("api/[controller]")]
 [ApiController]
+[Authorize]
 public class UserController(IMediator mediator) : ControllerBase
 {
     [HttpPost("AddPhoto/{userId}")]

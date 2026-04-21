@@ -53,9 +53,9 @@ public class UserHandler(ITalkRealServices service,ICloudinaryService cloudinary
 {
     public async Task<bool> Handle(AddUserPhotoCommand request, CancellationToken cancellationToken)
     {
-        var imageUrl = await cloudinaryService.UploadPhotoAsync(request.File);
-        if (string.IsNullOrEmpty(imageUrl)) return false;
-        return await service.UseService.UpdateProfileImageAsync(request.UserId, imageUrl);
+        var imageUrl = await cloudinaryService.UploadFileAsync(request.File);
+        if (imageUrl==null) return false;
+        return await service.UseService.UpdateProfileImageAsync(request.UserId, imageUrl.SecureUrl.ToString());
     }
     public async Task<ImageDTO?> Handle(GetUserImageQuery request, CancellationToken cancellationToken)
     {

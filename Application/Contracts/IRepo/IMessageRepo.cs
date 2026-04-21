@@ -13,4 +13,5 @@ public interface IMessageRepo
 {
     Task<bool> AddMessageAsync(Message message);
     IQueryable<Message> GetChatHistory(ChatHistoryRequestDto criteria);
+    Task<Message?> GetMessageByPublicIdAsync(string publicId);
 }

@@ -26,6 +26,7 @@ public static class DependenciesCollector
 {
     public static IServiceCollection AddServices(this IServiceCollection services)
     {
+        #region Cloudinary
         var CloudinaryName = Environment.GetEnvironmentVariable("CloudinaryName");
         var CloudinaryApiKey = Environment.GetEnvironmentVariable("CloudinaryApiKey");
         var CloudinaryApiSecret = Environment.GetEnvironmentVariable("CloudinaryApiSecret");
@@ -35,7 +36,8 @@ public static class DependenciesCollector
         CloudinaryApiSecret
         );
         services.AddTransient<CloudinaryDotNet.Cloudinary>(_ => new CloudinaryDotNet.Cloudinary(account));
-        services.AddScoped<ICloudinaryService, CloudinaryService>();
+        services.AddScoped<ICloudinaryService, CloudinaryService>(); 
+        #endregion
 
         var issuer = Environment.GetEnvironmentVariable("SaasJWTIssuer");
         var audience = Environment.GetEnvironmentVariable("SaasJWTAudience");
@@ -48,7 +50,6 @@ public static class DependenciesCollector
              options.UseNpgsql(DatabaseConfig);
          });
         services.AddScoped<ITalkRealServices, TalkRealServices>();
-        services.AddSignalR();
         services.AddSignalR();
         services.AddGrpc(); 
         services.AddScoped<IUnitofWork, UnitOfWork>();

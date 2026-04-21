@@ -16,18 +16,10 @@ public class MessagingController(IMediator mediator) : ControllerBase
 {
     [HttpPost]
     [Route("SendMessage")]
-    public async Task<IActionResult> RegisterTenant([FromBody] MessageDto MessageDto)
+    public async Task<IActionResult> RegisterTenant([FromForm] MessageDto MessageDto)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
         var result = await mediator.Send(new SendMessageCommand(MessageDto));
-        var response = ApiResponse.Success(result);
-        return Ok(response);
-    }
-    [HttpPost("AddAttachment")]
-    public async Task<ActionResult> AddAttachment(AddAttachmentDTO DTO)
-    {
-        var result = await mediator.Send(new AddAttachmentoCommand(DTO));
-        if (!result) return BadRequest("Failed to upload Attachment");
         var response = ApiResponse.Success(result);
         return Ok(response);
     }
