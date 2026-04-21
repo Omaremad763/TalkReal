@@ -23,4 +23,13 @@ public class MessagingController(IMediator mediator) : ControllerBase
         var response = ApiResponse.Success(result);
         return Ok(response);
     }
+    [HttpPost("AddAttachment")]
+    public async Task<ActionResult> AddAttachment(AddAttachmentDTO DTO)
+    {
+        var result = await mediator.Send(new AddAttachmentoCommand(DTO));
+        if (!result) return BadRequest("Failed to upload Attachment");
+        var response = ApiResponse.Success(result);
+        return Ok(response);
+    }
+
 }

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { MessagingService } from '../../core/core services/messaging-service';
 import { HeaderComponent } from '../header/header';
@@ -14,7 +14,7 @@ import { AuthService } from '../shared_services/auth.service';
     <main class="h-[calc(100vh-5rem)]"><router-outlet></router-outlet></main>
   `,
 })
-export class MainLayoutComponent {
+export class MainLayoutComponent implements OnInit {
   private authService = inject(AuthService);
   private messagingService = inject(MessagingService);
   ngOnInit(): void {

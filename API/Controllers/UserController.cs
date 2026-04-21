@@ -38,5 +38,7 @@ public class UserController(IMediator mediator) : ControllerBase
         var response = ApiResponse.Success(result);
         return Ok(response);
     }
+
+
 }
 

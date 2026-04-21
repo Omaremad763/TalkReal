@@ -20,11 +20,11 @@ export class HeaderComponent implements OnInit {
   private userService = inject(UserService);
   private router = inject(Router);
 
-  @Input() title: string = 'TalkReal';
+  @Input() title = 'TalkReal';
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
 
-  username: string = '';
-  userId: string = '';
+  username = '';
+  userId = '';
   ImageURL: string | null = null;
   menuOpened = false;
 
