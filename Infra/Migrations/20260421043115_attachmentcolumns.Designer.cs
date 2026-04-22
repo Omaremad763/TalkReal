@@ -13,7 +13,7 @@ namespace Infra.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
     [Migration("20260421043115_attachmentcolumns")]
-    partial class attachmentcolumns
+    partial class Attachmentcolumns
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

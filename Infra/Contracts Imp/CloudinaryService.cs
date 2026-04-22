@@ -7,37 +7,33 @@ using Microsoft.AspNetCore.Http;
 
 namespace Infra.Contracts_Imp;
 
-  public class CloudinaryService: ICloudinaryService
-  {
-    private readonly Cloudinary _cloudinary;
+public class CloudinaryService(Cloudinary cloudinary) : ICloudinaryService
+{
+    private readonly Cloudinary _cloudinary = cloudinary;
 
-    public CloudinaryService(Cloudinary cloudinary)
-    {
-      _cloudinary = cloudinary;
-    }
     public async Task<ImageUploadResult?> UploadFileAsync(IFormFile file)
     {
-      if (file.Length == 0)
-      {
-        return null;
-      }
+        if (file.Length == 0)
+        {
+            return null;
+        }
 
-      using var stream = file.OpenReadStream();
+        using var stream = file.OpenReadStream();
 
-      var uploadParams = new ImageUploadParams()
-      {
-        File = new FileDescription(file.FileName, stream),
-        Folder = "chat-attachments"
-      };
+        var uploadParams = new ImageUploadParams()
+        {
+            File = new FileDescription(file.FileName, stream),
+            Folder = "chat-attachments"
+        };
 
-      var uploadResult = await _cloudinary.UploadAsync(uploadParams);
+        var uploadResult = await _cloudinary.UploadAsync(uploadParams);
 
-      if (uploadResult.Error != null)
-      {
-        throw new Exception(uploadResult.Error.Message);
-      }
+        if (uploadResult.Error != null)
+        {
+            throw new InvalidOperationException($"Media Upload Failed: {uploadResult.Error.Message}");
+        }
 
         return uploadResult;
     }
-  }
+}
 

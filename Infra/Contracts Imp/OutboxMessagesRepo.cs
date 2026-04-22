@@ -18,7 +18,7 @@ public class OutboxMessagesRepo(ApplicationDbContext context) : IOutboxMessagesR
     {
         return await context.Set<OutboxMessage>()
             .Where(m => m.ProcessedOnUtc == null && m.ErrorCount < maxErrors)
-            .OrderBy(m => m.OccurredOnUtc)    
+            .OrderBy(m => m.OccurredOnUtc)
             .Take(batchSize)
             .ToListAsync();
     }

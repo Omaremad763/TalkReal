@@ -1,57 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
+﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
 using Application.Contracts;
 using Application.Contracts.IService;
 using Application.DTOS;
 
-using AutoMapper;
-
 using Domain.Entities;
 
-using Infra.Presistence;
-
-using MediatR;
-
-using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.Win32;
 
 namespace Infra.Contracts_Imp;
-public class UserService(IUnitofWork unitofwork,IMapper mapper) : IUserService
+public class UserService(IUnitofWork unitofwork) : IUserService
 {
-    private static string GenerateJwt(User user)
-    {
-        var claims = new List<Claim>
-        {
-            new(ClaimTypes.NameIdentifier, user.Id.ToString()),
-            new (ClaimTypes.Email, user.Email!),
-            new (ClaimTypes.Name, user.UserName!),
-         };
-
-        var Issuer = Environment.GetEnvironmentVariable("SaasJWTIssuer");
-        var audience = Environment.GetEnvironmentVariable("SaasJWTAudience");
-        var JWTkey = Environment.GetEnvironmentVariable("SaasJwtKey");
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JWTkey));
-        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-        var token = new JwtSecurityToken(
-            issuer: Issuer,
-            audience: audience,
-            claims: claims,
-            expires: DateTime.UtcNow.AddHours(1),
-            signingCredentials: creds
-        );
-
-        return new JwtSecurityTokenHandler().WriteToken(token);
-    }
-    public async Task<string?> RegistertUser(RegisterDto dto)
+    public async Task RegistertUser(RegisterDto dto)
     {
         var user = new User
         {
@@ -61,22 +23,22 @@ public class UserService(IUnitofWork unitofwork,IMapper mapper) : IUserService
         var result = await unitofwork.UserRepo.CreateUserAsync(user, dto.Password);
         if (result.Errors.Any())
         {
-            var errorMessages = string.Join(", ", result.Errors.Select(e => e.Description));
-            return "Failed Registration" + errorMessages;
+            var errorMessages = string.Join(", ",
+                result.Errors.Select(e => e.Description));
+            throw new InvalidOperationException($"Registration Failed: {errorMessages}");
         }
-        return null;
     }
-    public async Task<string?> Login(LoginDto dto)
+    public async Task<string> Login(LoginDto dto)
     {
         var user = await unitofwork.UserRepo.FindByEmailAsync(dto.Email);
-        if (user == null || !await unitofwork.UserRepo.CheckPasswordAsync(user, dto.Password))
-            return null;
+        if (user is null || !await unitofwork.UserRepo.CheckPasswordAsync(user, dto.Password))
+            throw new UnauthorizedAccessException("Invalid email or password.");
         return GenerateJwt(user);
     }
-    public async Task<bool> UpdateUserStatus(UpdateUserStatusDTO dto, CancellationToken CT)
+    public async Task<bool> UpdateUserStatus(UpdateUserStatusDto dto, CancellationToken CT)
     {
         var user = await unitofwork.UserRepo.FindByidAsync(dto.UserId);
-        if (user == null)return false;
+        if (user == null) return false;
         if (user != null)
         {
             user.IsOnline = dto.IsOnline;
@@ -84,13 +46,13 @@ public class UserService(IUnitofWork unitofwork,IMapper mapper) : IUserService
         }
         return await unitofwork.CommitAsync() > 0;
     }
-    public async Task<List<UserStatusDto?>> GetUserStatus(CancellationToken ct)
+    public async Task<List<UserStatusDto?>> GetUserStatus(CancellationToken CT)
     {
-        var entity = await unitofwork.UserRepo.GetUserStatus(ct);
-        var mapping = new List<UserStatusDto>(); ;
+        var entity = await unitofwork.UserRepo.GetUserStatus(CT);
+        var mapping = new List<UserStatusDto>();
         if (entity != null)
         {
-           foreach(var user in entity)
+            foreach (var user in entity)
             {
                 mapping.Add(new UserStatusDto
                 {
@@ -124,4 +86,30 @@ public class UserService(IUnitofWork unitofwork,IMapper mapper) : IUserService
     {
         return await unitofwork.UserRepo.DeleteImagetById(userid);
     }
+    private static string GenerateJwt(User user)
+    {
+        var claims = new List<Claim>
+        {
+            new(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new (ClaimTypes.Email, user.Email!),
+            new (ClaimTypes.Name, user.UserName!),
+         };
+
+        var Issuer = Environment.GetEnvironmentVariable("SaasJWTIssuer");
+        var audience = Environment.GetEnvironmentVariable("SaasJWTAudience");
+        var JWTkey = Environment.GetEnvironmentVariable("SaasJwtKey");
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JWTkey));
+        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+        var token = new JwtSecurityToken(
+            issuer: Issuer,
+            audience: audience,
+            claims: claims,
+            expires: DateTime.UtcNow.AddHours(1),
+            signingCredentials: creds
+        );
+
+        return new JwtSecurityTokenHandler().WriteToken(token);
+    }
+
 }

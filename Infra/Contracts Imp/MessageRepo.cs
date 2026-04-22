@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Infra.Contracts_Imp;
 public class MessageRepo(ApplicationDbContext context) : IMessageRepo
 {
-    public async Task<bool>AddMessageAsync(Message message)
+    public async Task<bool> AddMessageAsync(Message message)
     {
         await context.Messages.AddAsync(message);
         return true;
@@ -21,8 +21,8 @@ public class MessageRepo(ApplicationDbContext context) : IMessageRepo
             .AsNoTracking()
             .Include(m => m.Attachment)
             .Where(m =>
-                (m.SenderId == criteria.senderid && m.ReceiverId == criteria.receiverId) ||
-                (m.SenderId == criteria.receiverId && m.ReceiverId == criteria.senderid))
+                (m.SenderId == criteria.Senderid && m.ReceiverId == criteria.ReceiverId) ||
+                (m.SenderId == criteria.ReceiverId && m.ReceiverId == criteria.Senderid))
             .OrderByDescending(m => m.SentAt)
             .Take(criteria.Take);
     }

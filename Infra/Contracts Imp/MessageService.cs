@@ -6,12 +6,11 @@ using Domain.Entities;
 using Domain.Events;
 using Domain.Value_Object;
 
-using MediatR;
-
 using Newtonsoft.Json;
 
 namespace Infra.Contracts_Imp;
-public class MessageService(IUnitofWork unitOfWork, IMediator mediator ,ICloudinaryService cloudinaryService) : IMessageService
+public class MessageService(IUnitofWork unitOfWork,
+    ICloudinaryService cloudinaryService) : IMessageService
 {
     public async Task<bool> SendMessageAsync(MessageDto dto)
     {
@@ -22,7 +21,7 @@ public class MessageService(IUnitofWork unitOfWork, IMediator mediator ,ICloudin
 
             var conversation = await unitOfWork.ConversationRepo.GetBetweenUsersAsync(p1, p2);
 
-            if (conversation == null)
+            if (conversation is null)
             {
                 conversation = new Conversation
                 {
@@ -46,7 +45,7 @@ public class MessageService(IUnitofWork unitOfWork, IMediator mediator ,ICloudin
                         Type: dto.File.ContentType,
                         Size: dto.File.Length,
                         PublicId: uploadResult.PublicId,
-                        IsProcessed: false 
+                        IsProcessed: false
                     );
                 }
             }
@@ -59,7 +58,7 @@ public class MessageService(IUnitofWork unitOfWork, IMediator mediator ,ICloudin
                 Content = dto.Content ?? (attachment != null ? "Sent an attachment" : string.Empty),
                 SentAt = DateTime.UtcNow,
                 ConversationId = conversation.Id,
-                Status=Domain.Enum.MessageStatusEnum.Delivered,
+                Status = Domain.Enum.MessageStatus.Delivered,
                 Attachment = attachment
             };
 
@@ -70,7 +69,7 @@ public class MessageService(IUnitofWork unitOfWork, IMediator mediator ,ICloudin
                 message.SenderId,
                 message.ReceiverId,
                 message.Content,
-                message.Attachment?.Url 
+                message.Attachment?.Url
             );
 
             var outboxMessage = new OutboxMessage
@@ -93,10 +92,10 @@ public class MessageService(IUnitofWork unitOfWork, IMediator mediator ,ICloudin
         }
     }
 
-    public  IQueryable<MessageDto> GetChatHistoryQuery(ChatHistoryRequestDto criteria)
+    public IQueryable<MessageDto> GetChatHistoryQuery(ChatHistoryRequestDto criteria)
     {
         var query = unitOfWork.MessageRepo.GetChatHistory(criteria);
-        var mapping= query.Select(m => new MessageDto
+        var mapping = query.Select(m => new MessageDto
         {
             Id = m.Id,
             SenderId = m.SenderId,
@@ -105,7 +104,7 @@ public class MessageService(IUnitofWork unitOfWork, IMediator mediator ,ICloudin
             Content = m.Content,
             SentAt = m.SentAt,
             Status = m.Status,
-            attachmentUrl=m.Attachment.Url
+            AttachmentUrl = m.Attachment.Url
         });
         return mapping;
 

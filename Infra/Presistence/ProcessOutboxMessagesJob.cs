@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Infra.Presistence;
+﻿namespace Infra.Presistence;
 using Application.Contracts;
 
 using MediatR;
@@ -31,7 +25,7 @@ public class ProcessOutboxMessagesJob(IUnitofWork unitOfWork, IPublisher publish
                 {
                     await publisher.Publish(domainEvent, context.CancellationToken);
                     outboxMessage.ProcessedOnUtc = DateTime.UtcNow;
-                    outboxMessage.Error = null;      
+                    outboxMessage.Error = null;
                 }
             }
             catch (Exception ex)

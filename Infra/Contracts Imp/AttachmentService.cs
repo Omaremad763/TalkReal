@@ -1,33 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using Application.Contracts;
+﻿using Application.Contracts;
 using Application.Contracts.IService;
-using Application.CQRS;
 using Application.DTOS;
 
-using CloudinaryDotNet.Actions;
-
-using Domain.Entities;
-using Domain.Enum;
-using Domain.Value_Object;
-
 using Infra.Presistence;
-
-using MediatR;
 
 using Microsoft.AspNetCore.SignalR;
 
 namespace Infra.Contracts_Imp;
-public class AttachmentService(IUnitofWork unitOfWork, 
+public class AttachmentService(IUnitofWork unitOfWork,
     IHubContext<PresenceHub> hubContext
-    ) 
+    )
    : IAttachmentService
 {
-    public async Task<bool> ProcessMediaWebhookAsync(CloudinaryHookDTO DTO)
+    public async Task<bool> ProcessMediaWebhookAsync(CloudinaryHookDto DTO)
     {
         var message = await unitOfWork.MessageRepo.GetMessageByPublicIdAsync(DTO.PublicId);
 

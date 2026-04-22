@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-
-using Application.Contracts.IRepo;
-using Application.DTOS;
+﻿using Application.Contracts.IRepo;
 
 using Domain.Entities;
 
@@ -16,7 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infra.Contracts_Imp;
-public class UserRepo(UserManager<User> _userManager,ApplicationDbContext Context) : IUserRepo
+public class UserRepo(UserManager<User> _userManager, ApplicationDbContext Context) : IUserRepo
 {
     public async Task<IdentityResult> CreateUserAsync(User user, string password)
     {
@@ -42,7 +34,7 @@ public class UserRepo(UserManager<User> _userManager,ApplicationDbContext Contex
         return await Context.Users.FirstOrDefaultAsync(x => x.Id == Id);
     }
 
-    public async Task<List<User>> GetUserStatus( CancellationToken CT)
+    public async Task<List<User>> GetUserStatus(CancellationToken CT)
     {
         return await Context.Users.AsNoTracking().ToListAsync(CT);
     }
@@ -50,12 +42,12 @@ public class UserRepo(UserManager<User> _userManager,ApplicationDbContext Contex
     public async Task<bool> DeleteImagetById(Guid userid)
     {
         var getuser = await GetUserByidAsync(userid);
-        if (getuser != null) 
-        { 
+        if (getuser != null)
+        {
             getuser.ProfileImageUrl = null;
-            Context.SaveChanges();
+            await Context.SaveChangesAsync();
             return true;
-        };
+        }
         return false;
     }
 }

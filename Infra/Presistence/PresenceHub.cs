@@ -1,7 +1,10 @@
 ﻿using Application.CQRS;
 using Application.DTOS;
+
 using Grpc.Core;
+
 using MediatR;
+
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
@@ -15,10 +18,10 @@ public class PresenceHub(IMediator mediator) : Hub
     public override async Task OnConnectedAsync()
     {
         var userId = Guid.Parse(Context.UserIdentifier!);
-        UpdateUserStatusDTO dto = new()
+        UpdateUserStatusDto dto = new()
         {
             UserId = userId,
-            IsOnline =true
+            IsOnline = true
         };
         await _mediator.Send(new UpdateUserStatusCommand(dto));
         await Clients.Others.SendAsync("UserStatusChanged", userId, true);
@@ -28,7 +31,7 @@ public class PresenceHub(IMediator mediator) : Hub
     {
         var userId = Guid.Parse(Context.UserIdentifier!);
         await Task.Delay(5000);
-        UpdateUserStatusDTO dto = new()
+        UpdateUserStatusDto dto = new()
         {
             UserId = userId,
             IsOnline = false

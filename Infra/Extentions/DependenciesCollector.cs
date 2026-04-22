@@ -15,12 +15,9 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
 using Quartz;
-
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 namespace Infra.Extentions;
 public static class DependenciesCollector
 {
@@ -36,7 +33,7 @@ public static class DependenciesCollector
         CloudinaryApiSecret
         );
         services.AddTransient<CloudinaryDotNet.Cloudinary>(_ => new CloudinaryDotNet.Cloudinary(account));
-        services.AddScoped<ICloudinaryService, CloudinaryService>(); 
+        services.AddScoped<ICloudinaryService, CloudinaryService>();
         #endregion
 
         var issuer = Environment.GetEnvironmentVariable("SaasJWTIssuer");
@@ -51,9 +48,10 @@ public static class DependenciesCollector
          });
         services.AddScoped<ITalkRealServices, TalkRealServices>();
         services.AddSignalR();
-        services.AddGrpc(); 
+        services.AddGrpc();
         services.AddScoped<IUnitofWork, UnitOfWork>();
-        services.AddAutoMapper(cfg => {
+        services.AddAutoMapper(cfg =>
+        {
             cfg.AddProfile<AutoMapperProfile>();
         }, typeof(AutoMapperProfile).Assembly);
 
@@ -125,7 +123,7 @@ public static class DependenciesCollector
             .WithIntervalInSeconds(5)
             .RepeatForever()));
 });
-        services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true); 
+        services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
         #endregion
 
         return services;
