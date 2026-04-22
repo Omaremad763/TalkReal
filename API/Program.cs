@@ -6,7 +6,7 @@ using Infra.Presistence;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
-builder.Services.AddServices();       
+builder.Services.AddServices();
 builder.Services.AddOpenApi();
 builder.Services.AddGraphQLServer()
     .AddQueryType<GraphQLApis>()
@@ -19,7 +19,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("VercelPolicy", policy =>
     {
-        policy.WithOrigins("https://*.vercel.app", "http://localhost:4200") 
+        policy.WithOrigins("https://*.vercel.app", "http://localhost:4200")
         .SetIsOriginAllowedToAllowWildcardSubdomains()
         .AllowAnyHeader()
         .AllowAnyMethod()
@@ -43,4 +43,4 @@ app.MapControllers();
 app.MapHub<PresenceHub>("/hubs/presence");
 app.MapGrpcService<PresenceGrpcService>();
 app.MapGraphQL();
-app.Run();
+await app.RunAsync();

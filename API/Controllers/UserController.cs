@@ -1,12 +1,8 @@
 ﻿using Application.CQRS;
-using Application.DTOS;
-
-using Domain.Entities;
 
 using MediatR;
 
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
@@ -36,7 +32,7 @@ public class UserController(IMediator mediator) : ControllerBase
     [Route("DeleteImagetById/{id}")]
     public async Task<IActionResult> DeleteImagetById(Guid id)
     {
-        var result = await mediator.Send(new GetUserImageQuery(id));
+        var result = await mediator.Send(new DeleteImageByIdCommand(id));
         var response = ApiResponse.Success(result);
         return Ok(response);
     }

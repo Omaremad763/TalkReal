@@ -32,16 +32,7 @@ export class LoginComponent {
     }
     const formData = this.form.getRawValue() as AuthDtos.RegistrationDto;
     this.auth.login(formData).subscribe({
-      next: (res: string | null) => {
-        if (!res) {
-          Swal.fire({
-            title: 'Login Failed',
-            text: 'Invalid email or password. Please try again.',
-            icon: 'error',
-            confirmButtonColor: '#0891b2',
-          });
-          return;
-        }
+      next: (res: string) => {
         Swal.fire({
           title: 'Welcome Back!',
           text: 'Logging you in...',
@@ -56,11 +47,19 @@ export class LoginComponent {
         });
       },
       error: (err) => {
-        console.error('Technical Error:', err);
+        let errorMessage = 'Our systems are down, please try again later.';
+        let iconType: 'error' | 'warning' = 'warning';
+
+        if (err.status === 401) {
+          errorMessage = 'Invalid email or password. Please try again.';
+          iconType = 'error';
+        }
+
         Swal.fire({
-          title: 'Server Error',
-          text: 'Our systems are down, please try again later.',
-          icon: 'warning',
+          title: iconType === 'error' ? 'Login Failed' : 'Server Error',
+          text: errorMessage,
+          icon: iconType,
+          confirmButtonColor: '#0891b2',
         });
       },
     });

@@ -43,9 +43,9 @@ export class AuthService {
     );
   }
 
-  register(data: AuthDtos.RegistrationDto): Observable<string> {
+  register(data: AuthDtos.RegistrationDto): Observable<ApiResponse<any>> {
     return this.http
-      .post<ApiResponse<string>>(`${this.baseUrl}/Register`, data)
+      .post<ApiResponse<any>>(`${this.baseUrl}/Register`, data)
       .pipe(map((res) => res.data));
   }
 

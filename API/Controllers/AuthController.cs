@@ -16,8 +16,8 @@ public class AuthController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> RegisterTenant([FromBody] RegisterDto registrationDto)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
-        var result = await mediator.Send(new RegisterCommand(registrationDto));
-        var response = ApiResponse.Success(result);
+        await mediator.Send(new RegisterCommand(registrationDto));
+        var response = ApiResponse.Success();
         return Ok(response);
     }
     [HttpPost]
