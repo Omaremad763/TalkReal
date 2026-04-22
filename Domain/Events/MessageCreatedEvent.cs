@@ -1,15 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Mail;
-using System.Text;
-using System.Threading.Tasks;
-
-using MediatR;
+﻿using MediatR;
 
 namespace Domain.Events;
 
-public record MessageCreatedEvent : INotification       
+public record MessageCreatedEvent : INotification
 {
     public Guid MessageId { get; init; }
     public string SenderId { get; init; }
@@ -25,6 +18,6 @@ public record MessageCreatedEvent : INotification
         ReceiverId = receiverId;
         Content = content;
         CreatedAt = DateTime.UtcNow;
-        AttachmentURL = url;
+        AttachmentURL = url ?? "No Attachment";
     }
 }
