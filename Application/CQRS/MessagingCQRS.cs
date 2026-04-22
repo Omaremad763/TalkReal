@@ -24,13 +24,13 @@ public class ChatApplicationHandler(ITalkRealServices service) :
     IRequestHandler<GetChatHistoryQuery, IQueryable<MessageDto>>,
     INotificationHandler<MessageCreatedEvent>
 {
-    public async Task<bool> Handle(SendMessageCommand request, CancellationToken ct)
+    public async Task<bool> Handle(SendMessageCommand request, CancellationToken cancellationToken)
         => await service.MessageService.SendMessageAsync(request.Data);
 
-    public async Task<IQueryable<MessageDto>> Handle(GetChatHistoryQuery request, CancellationToken ct)
+    public async Task<IQueryable<MessageDto>> Handle(GetChatHistoryQuery request, CancellationToken cancellationToken)
         => await Task.FromResult(service.MessageService.GetChatHistoryQuery(request.ChatHistoryDTO));
 
-    public async Task Handle(MessageCreatedEvent notification, CancellationToken ct)
-    =>await service.NotificationService.SendMessageNotificationAsync(notification, ct);
+    public async Task Handle(MessageCreatedEvent notification, CancellationToken cancellationToken)
+=> await service.NotificationService.SendMessageNotificationAsync(notification, cancellationToken);
 }
 

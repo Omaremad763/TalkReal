@@ -1,15 +1,12 @@
 ﻿using Application.Contracts;
-using Application.Contracts.IService;
 using Application.DTOS;
-
-using Domain.Value_Object;
 
 using FluentValidation;
 
 using MediatR;
 
 namespace Application.CQRS;
-public record ProcessWebhookCommand(CloudinaryHookDTO DTO) : IRequest<bool>;
+public record ProcessWebhookCommand(CloudinaryHookDto DTO) : IRequest<bool>;
 public class ProcessWebhookCommandValidator : AbstractValidator<ProcessWebhookCommand>
 {
     public ProcessWebhookCommandValidator()
@@ -19,7 +16,7 @@ public class ProcessWebhookCommandValidator : AbstractValidator<ProcessWebhookCo
             .WithMessage("A valid secure URL is required.");
     }
 }
-public class WebhookHandler(ITalkRealServices service, ICloudinaryService cloudinaryService) :
+public class WebhookHandler(ITalkRealServices service) :
     IRequestHandler<ProcessWebhookCommand, bool>
 {
 

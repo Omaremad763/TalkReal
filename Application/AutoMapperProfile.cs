@@ -11,7 +11,7 @@ public class AutoMapperProfile : Profile
     public AutoMapperProfile()
     {
 
-      CreateMap<User,UserStatusDto>();
+        CreateMap<User, UserStatusDto>();
     }
 }
 

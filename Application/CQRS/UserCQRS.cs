@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using Application.Contracts;
+﻿using Application.Contracts;
 using Application.Contracts.IService;
 using Application.DTOS;
 
@@ -17,7 +11,7 @@ using Microsoft.AspNetCore.Http;
 namespace Application.CQRS;
 public record AddUserPhotoCommand(Guid UserId, IFormFile File) : IRequest<bool>;
 public record DeleteImageByIdCommand(Guid UserId) : IRequest<bool>;
-public record GetUserImageQuery(Guid UserId) : IRequest<ImageDTO?>;
+public record GetUserImageQuery(Guid UserId) : IRequest<ImageDto?>;
 public class AddUserPhotoValidator : AbstractValidator<AddUserPhotoCommand>
 {
     public AddUserPhotoValidator()
@@ -46,27 +40,27 @@ public class DeleteImagetByIdValidator : AbstractValidator<AddUserPhotoCommand>
 
 }
 
-public class UserHandler(ITalkRealServices service,ICloudinaryService cloudinaryService) :
+public class UserHandler(ITalkRealServices service, ICloudinaryService cloudinaryService) :
     IRequestHandler<AddUserPhotoCommand, bool>,
-    IRequestHandler<GetUserImageQuery, ImageDTO?>,
+    IRequestHandler<GetUserImageQuery, ImageDto?>,
     IRequestHandler<DeleteImageByIdCommand, bool>
 {
     public async Task<bool> Handle(AddUserPhotoCommand request, CancellationToken cancellationToken)
     {
         var imageUrl = await cloudinaryService.UploadFileAsync(request.File);
-        if (imageUrl==null) return false;
+        if (imageUrl is null) return false;
         return await service.UseService.UpdateProfileImageAsync(request.UserId, imageUrl.SecureUrl.ToString());
     }
-    public async Task<ImageDTO?> Handle(GetUserImageQuery request, CancellationToken cancellationToken)
+    public async Task<ImageDto?> Handle(GetUserImageQuery request, CancellationToken cancellationToken)
     {
         var user = await service.UseService.GetUserByidAsync(request.UserId);
-        if (user == null)  return null;
-        return new ImageDTO{imageURL = user.ProfileImageUrl};
+        if (user is null) return null;
+        return new ImageDto { ImageURL = user.ProfileImageUrl };
     }
 
     public async Task<bool> Handle(DeleteImageByIdCommand request, CancellationToken cancellationToken)
     {
-       return await service.UseService.DeleteImagetById(request.UserId);
+        return await service.UseService.DeleteImagetById(request.UserId);
     }
 }
 

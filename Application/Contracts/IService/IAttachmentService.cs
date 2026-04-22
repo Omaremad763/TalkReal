@@ -1,9 +1,8 @@
-﻿using Application.CQRS;
-using Application.DTOS;
+﻿using Application.DTOS;
 
 namespace Application.Contracts.IService;
 
 public interface IAttachmentService
 {
-    Task<bool> ProcessMediaWebhookAsync(CloudinaryHookDTO DTO);
+    Task<bool> ProcessMediaWebhookAsync(CloudinaryHookDto DTO);
 }
