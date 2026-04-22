@@ -1,0 +1,129 @@
+<app-photo imgSrc="/assets/images/bgphoto.svg">
+  <div
+    class="flex flex-col lg:flex-row items-center justify-between px-6 md:px-16 lg:px-24 xl:px-32 font-sans w-full min-h-screen gap-12 py-12"
+  >
+    <!-- Slogan -->
+    <div class="hidden lg:flex flex-col space-y-8 max-w-2xl text-left animate-fade-in">
+      <h1
+        class="text-6xl xl:text-7xl font-black text-blue-950 leading-[1.1] tracking-tight drop-shadow-xl"
+      >
+        Messaging That <br />
+        <span class="text-blue-950">Just Works.</span>
+      </h1>
+      <h2
+        class="text-white text-xl font-semibold max-w-lg leading-relaxed drop-shadow-md bg-black/20 backdrop-blur-sm px-4 py-2 rounded-md inline-block"
+      >
+        Fast, secure communication for teams that need clarity and speed.
+      </h2>
+    </div>
+
+    <!-- Form -->
+    <div class="w-full lg:max-w-xl flex justify-end">
+      <div
+        class="w-full bg-white rounded-[2.5rem] shadow-[0_25px_60px_-15px_rgba(0,0,0,0.3)] border border-slate-100 overflow-hidden transform transition-all"
+      >
+        <div class="py-10 text-center bg-slate-50 border-b border-slate-200">
+          <h2 class="text-4xl font-black text-blue-950 tracking-tighter italic">TalkReal</h2>
+          <p class="text-slate-500 mt-2 text-xs uppercase tracking-[0.2em] font-bold">
+            Sign in to your account
+          </p>
+        </div>
+
+        <form [formGroup]="form" (ngSubmit)="onSubmit()" class="p-10 xl:p-14 space-y-7">
+          <div class="space-y-2">
+            <label
+              class="block text-[15px] font-black uppercase tracking-widest text-blue-950 ml-1"
+            >
+              Email Address
+            </label>
+            <div class="relative group">
+              <span
+                class="absolute inset-y-0 left-0 pl-5 flex items-center text-slate-400 group-focus-within:text-cyan-600 transition-colors"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"
+                  />
+                </svg>
+              </span>
+
+              <input
+                type="email"
+                formControlName="email"
+                class="w-full pl-14 pr-6 py-4 bg-slate-50 border-2 border-slate-200 rounded-2xl focus:bg-white focus:border-cyan-500 focus:ring-4 focus:ring-cyan-500/5 outline-none text-slate-800 font-semibold transition-all duration-300 placeholder:text-slate-300 shadow-sm"
+                placeholder="e.g. name@talkreal.com"
+              />
+            </div>
+          </div>
+
+          <div class="space-y-2">
+            <label
+              class="block text-[15px] font-black uppercase tracking-widest text-blue-950 ml-1"
+            >
+              Secure Password
+            </label>
+            <div class="relative group">
+              <span
+                class="absolute inset-y-0 left-0 pl-5 flex items-center text-slate-400 group-focus-within:text-cyan-600 transition-colors"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                  />
+                </svg>
+              </span>
+
+              <input
+                type="password"
+                formControlName="password"
+                class="w-full pl-14 pr-6 py-4 bg-slate-50 border-2 border-slate-200 rounded-2xl focus:bg-white focus:border-cyan-500 focus:ring-4 focus:ring-cyan-500/5 outline-none text-slate-800 font-semibold transition-all duration-300 placeholder:text-slate-300 shadow-sm"
+                placeholder="••••••••"
+              />
+            </div>
+          </div>
+
+          <div class="pt-4">
+            <button
+              type="submit"
+              [disabled]="form.invalid"
+              class="w-full py-5 bg-slate-900 hover:bg-slate-800 disabled:bg-slate-200 text-white font-black rounded-2xl transition-all duration-300 shadow-xl shadow-slate-900/10 active:scale-[0.98] uppercase tracking-[0.2em] text-xs"
+            >
+              Login
+            </button>
+          </div>
+
+          <div class="pt-8 border-t border-slate-100 text-center">
+            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4">
+              Don't have an account yet?
+            </p>
+
+            <a
+              routerLink="/register"
+              class="inline-block w-full py-3 text-sm font-black text-cyan-600 border-2 border-cyan-50 rounded-xl hover:bg-cyan-50 hover:border-cyan-100 transition-all uppercase tracking-widest"
+            >
+              Create New Account
+            </a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</app-photo>

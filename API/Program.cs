@@ -1,23 +1,46 @@
+using API;
+using API.graphqlAPis;
+
+using Infra.Extentions;
+using Infra.Presistence;
+
 var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
-
 builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+builder.Services.AddServices();
 builder.Services.AddOpenApi();
+builder.Services.AddGraphQLServer()
+    .AddQueryType<GraphQLApis>()
+    .AddFiltering()
+    .AddSorting()
+    .AddProjections();
+builder.Services.AddScoped<GraphQLApis>();
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("VercelPolicy", policy =>
+    {
+        policy.WithOrigins("https://*.vercel.app", "http://localhost:4200")
+        .SetIsOriginAllowedToAllowWildcardSubdomains()
+        .AllowAnyHeader()
+        .AllowAnyMethod()
+        .AllowCredentials();
+    });
+});
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
-
+app.UseCors(policyName: "VercelPolicy");
+app.UseRouting();
+app.UseMiddleware<ExceptionMiddleware>();
 app.UseHttpsRedirection();
-
+app.UseAuthentication();
 app.UseAuthorization();
-
 app.MapControllers();
-
-app.Run();
+app.MapHub<PresenceHub>("/hubs/presence");
+app.MapGrpcService<PresenceGrpcService>();
+app.MapGraphQL();
+await app.RunAsync();

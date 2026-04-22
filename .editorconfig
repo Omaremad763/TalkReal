@@ -1,0 +1,9 @@
+[*]
+end_of_line = crlf
+
+
+[*.cs]
+csharp_style_prefer_extended_property_pattern = true:warning
+dotnet_diagnostic.T0002.severity = none
+dotnet_diagnostic.T0010.severity = none
+dotnet_diagnostic.T0016.severity = none

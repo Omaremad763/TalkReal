@@ -1,0 +1,60 @@
+<div class="h-full border-r border-blue-100 bg-white flex flex-col font-sans">
+  <div class="p-6 pb-4 border-b border-blue-50">
+    <div class="flex justify-between items-center">
+      <h2 class="text-xl font-bold text-blue-800 tracking-tight uppercase">Messages</h2>
+    </div>
+  </div>
+
+  <div class="flex-1 overflow-y-auto px-2 py-2 space-y-1 custom-scrollbar">
+    <div
+      *ngFor="let user of users"
+      (click)="selectUser(user.userId)"
+      class="group relative p-3 rounded-lg cursor-pointer transition-all duration-200 hover:bg-blue-50 flex items-center gap-3 border border-transparent active:scale-[0.98]"
+    >
+      <!-- userphoto -->
+      <div class="relative shrink-0">
+        <div
+          class="w-11 h-11 rounded-lg bg-blue-600 flex items-center justify-center overflow-hidden cursor-pointer shadow-sm relative"
+        >
+          <img
+            *ngIf="user.profileImageUrl; else noImage"
+            [src]="user.profileImageUrl"
+            alt="profile"
+            class="w-full h-full object-cover transition-transform duration-300 hover:scale-110"
+          />
+
+          <ng-template #noImage>
+            <span class="text-white font-bold text-xs tracking-widest uppercase">
+              {{ user.userName | slice: 0 : 2 }}
+            </span>
+          </ng-template>
+
+          <span
+            class="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full border-2 border-white shadow-sm"
+            [ngClass]="user.isOnline ? 'bg-green-500' : 'bg-slate-300'"
+          ></span>
+        </div>
+      </div>
+      <!-- UserTitle -->
+      <div class="flex-1 min-w-0">
+        <div class="flex justify-between items-baseline">
+          <h3
+            class="text-sm font-bold text-slate-700 truncate group-hover:text-blue-800 transition-colors"
+          >
+            {{ user.userName }}
+          </h3>
+          <span class="text-[9px] text-slate-400 font-semibold uppercase">12:45 PM</span>
+        </div>
+        <p
+          class="text-[11px] text-slate-500 truncate mt-0.5 font-medium uppercase tracking-tighter"
+        >
+          {{ user.isOnline ? 'Online now' : 'Offline' }}
+        </p>
+      </div>
+
+      <div
+        class="w-1 h-8 bg-blue-600 opacity-0 group-hover:opacity-100 rounded-full transition-opacity"
+      ></div>
+    </div>
+  </div>
+</div>

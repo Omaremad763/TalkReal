@@ -1,0 +1,18 @@
+﻿syntax = "proto3";
+
+option csharp_namespace = "TalkReal.Infrastructure.Presence";    
+
+service PresenceProto
+{
+    rpc GetUserStatus (UserStatusRequest) returns (UserStatusResponse);
+}
+
+message UserStatusRequest
+{
+  string user_id = 1;
+}
+
+message UserStatusResponse
+{
+  bool is_online = 1;
+}
