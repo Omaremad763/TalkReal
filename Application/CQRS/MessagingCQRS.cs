@@ -15,13 +15,12 @@ public class SendMessageValidator : AbstractValidator<SendMessageCommand>
 {
     public SendMessageValidator()
     {
-        RuleFor(x => x.Data.Content).NotEmpty().MaximumLength(1000).WithMessage("Message cannot be empty or too long.");
         RuleFor(x => x.Data.ReceiverId).NotEmpty().WithMessage("Receiver is required.");
         RuleFor(x => x.Data.Content)
-                    .Cascade(CascadeMode.Stop) 
-                    .NotEmpty().WithMessage("Message content is required.")
-                    .Must(c => !string.IsNullOrWhiteSpace(c)).WithMessage("Message cannot be whitespace.")
-                    .MaximumLength(1000).WithMessage("Message is too long.");
+        .Cascade(CascadeMode.Stop) 
+        .NotEmpty().WithMessage("Message content is required.")
+        .Must(c => !string.IsNullOrWhiteSpace(c)).WithMessage("Message cannot be whitespace.")
+        .MaximumLength(1000).WithMessage("Message is too long.");
     }
 }
 public class ChatApplicationHandler(ITalkRealServices service) :

@@ -4,14 +4,16 @@ using Application.Contracts.IService;
 using Infra.Presistence;
 
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.Configuration;
 
 namespace Infra.Contracts_Imp;
 public class TalkRealServices(IUnitofWork unitofWork,
     IHubContext<PresenceHub> hubContext,
-    ICloudinaryService CloudinaryService
+    ICloudinaryService CloudinaryService,
+    IConfiguration config
     ) : ITalkRealServices
 {
-    public IUserService UseService => new UserService(unitofWork);
+    public IUserService UseService => new UserService(unitofWork, config);
 
     public IMessageService MessageService => new MessageService(unitofWork, CloudinaryService);
 

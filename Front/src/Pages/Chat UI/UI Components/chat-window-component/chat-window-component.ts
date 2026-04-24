@@ -18,26 +18,31 @@ export class ChatWindowComponent {
   private messagingService = inject(MessagingService);
   private authService = inject(AuthService);
   private QraphQlService = inject(QraphQlService);
-
+  receiver: messagedto.UserStatusDto | null = null;
   receiverid = input.required<string>();
   @Input() senderid!: string;
 
   messages: messagedto.MessageDto[] = [];
+  users: messagedto.UserStatusDto[] = [];
+
   selectedFile: File | null = null;
   newMessage = '';
-
-  // ngOnChanges(changes: SimpleChanges): void {
-  //   if (changes['selectedUserId'] && this.receiverid) {
-  //     this.loadHistory();
-  //   }
-  // }
 
   constructor() {
     effect(() => {
       const id = this.receiverid();
       if (id) {
         this.loadHistory();
+        this.loadUsers();
       }
+    });
+  }
+
+  loadUsers() {
+    this.QraphQlService.getOnlineUsers().subscribe({
+      next: (res: messagedto.UserStatusDto[]) => {
+        this.users = res;
+      },
     });
   }
 
@@ -67,12 +72,12 @@ export class ChatWindowComponent {
     const localMessage: any = {
       senderId: user.userId,
       receiverId: this.receiverid,
-      content: this.newMessage || (this.selectedFile ? 'Sending attachment...' : ''),
+      content: this.newMessage?.trim() || (this.selectedFile ? 'no text content' : ''),
       sentAt: new Date().toISOString(),
       status: messagedto.MessageStatusEnum.Pending,
       attachmentUrl: this.selectedFile ? URL.createObjectURL(this.selectedFile) : null,
     };
-    this.messagingService.sendmessage(MessageData).subscribe({
+    this.messagingService.sendmessage(localMessage).subscribe({
       next: () => {
         this.messages.push(localMessage);
         this.newMessage = '';

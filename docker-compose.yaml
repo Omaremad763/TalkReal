@@ -1,0 +1,64 @@
+﻿name: talkreal-system-v1
+services:
+  db:
+    image: postgres:latest
+    container_name: TakReal_db-postgres
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - postgres_data:/var/lib/postgresql
+    networks:
+      - talkreal-network
+
+  api:
+    image: ${DOCKER_REGISTRY-}api
+    container_name: TalkReal_Backend.Net
+    build:
+      context: .
+      dockerfile: API/Dockerfile
+    ports:
+      - "5000:8080"
+      - "5001:8081"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+        -Cloudinary__CloudinaryName=${CloudinaryName}
+        -Cloudinary__CloudinaryApiKey=${CloudinaryApiKey}
+        -Cloudinary__CloudinaryApiSecret=${CloudinaryApiSecret}
+        -JwtSettings__Key=${JWT_KEY}
+        -JwtSettings__Issuer=${JWT_ISSUER}
+        -JwtSettings__Audience=${JWT_AUDIENCE}
+      - TalkRealdbConfig=Host=db; Port=5432; Database=${DB_NAME}; Username=${DB_USER}; Password=${DB_PASSWORD}
+      - ASPNETCORE_URLS=http://+:8080
+    depends_on:
+      db:
+        condition: service_healthy
+    networks: 
+      - talkreal-network
+
+  frontend:
+    build:
+      context: ./Front
+      dockerfile: Dockerfile
+    container_name: TalkReal_frontend_Angular
+    ports:
+      - "4200:80"
+    depends_on:
+      - api
+    networks:
+      - talkreal-network
+
+volumes:
+  postgres_data:
+
+networks:
+  talkreal-network:
+    driver: bridge

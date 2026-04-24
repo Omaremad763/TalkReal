@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
+using Microsoft.Extensions.Configuration;
 
 public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
     : IdentityDbContext<User, IdentityRole<Guid>, Guid>(options)
@@ -42,11 +43,16 @@ public class ApplicationDbContextFactory : IDesignTimeDbContextFactory<Applicati
 {
     public ApplicationDbContext CreateDbContext(string[] args)
     {
-        var databaseConfig = Environment.GetEnvironmentVariable("TalkRealConfig");
+        IConfigurationRoot config = new ConfigurationBuilder()
+          .SetBasePath(Directory.GetCurrentDirectory())
+          .AddJsonFile("appsettings.json", optional: true)
+          .AddEnvironmentVariables()
+          .Build();
+        var databaseConfig = config["TalkRealdbConfig"];
 
-        var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
+        var optionsBuilder = 
+        new DbContextOptionsBuilder<ApplicationDbContext>();
         optionsBuilder.UseNpgsql(databaseConfig);
-
         return new ApplicationDbContext(optionsBuilder.Options);
     }
 }

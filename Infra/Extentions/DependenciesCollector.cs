@@ -14,6 +14,7 @@ using Infra.Presistence;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 
@@ -21,12 +22,12 @@ using Quartz;
 namespace Infra.Extentions;
 public static class DependenciesCollector
 {
-    public static IServiceCollection AddServices(this IServiceCollection services)
+    public static IServiceCollection AddServices(this IServiceCollection services,IConfiguration config)
     {
         #region Cloudinary
-        var CloudinaryName = Environment.GetEnvironmentVariable("CloudinaryName");
-        var CloudinaryApiKey = Environment.GetEnvironmentVariable("CloudinaryApiKey");
-        var CloudinaryApiSecret = Environment.GetEnvironmentVariable("CloudinaryApiSecret");
+        var CloudinaryName = config["Cloudinary:CloudinaryName"];
+        var CloudinaryApiKey = config["Cloudinary:CloudinaryApiKey"];
+        var CloudinaryApiSecret = config["Cloudinary:CloudinaryApiSecret"];
         var account = new CloudinaryDotNet.Account(
         CloudinaryName,
         CloudinaryApiKey,
@@ -36,11 +37,11 @@ public static class DependenciesCollector
         services.AddScoped<ICloudinaryService, CloudinaryService>();
         #endregion
 
-        var issuer = Environment.GetEnvironmentVariable("SaasJWTIssuer");
-        var audience = Environment.GetEnvironmentVariable("SaasJWTAudience");
-        var jwtKey = Environment.GetEnvironmentVariable("SaasJwtKey");
+        var Issuer = config["Jwt:Issuer"];
+        var audience = config["Jwt:Audience"];
+        var JWTkey = config["Jwt:key"];
         var assembly = typeof(IApplicationHandlerMarker).Assembly;
-        var DatabaseConfig = Environment.GetEnvironmentVariable("TalkRealConfig");
+        var DatabaseConfig = config["TalkRealdbConfig"];
         services.AddDbContext<ApplicationDbContext>
          (options =>
          {
@@ -85,20 +86,21 @@ public static class DependenciesCollector
                     ValidateAudience = true,
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
-                    ValidIssuer = issuer,
+                    ValidIssuer = Issuer,
                     ValidAudience = audience,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey)),
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JWTkey)),
                     RoleClaimType = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role",
                     NameClaimType = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"
                 };
                 options.Events = new JwtBearerEvents
                 {
+                    //signalR Token
                     OnMessageReceived = context =>
                     {
                         var accessToken = context.Request.Query["access_token"];
                         var path = context.HttpContext.Request.Path;
 
-                        if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/hubs/presence"))
+                        if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/api/hubs/presence"))
                         {
                             context.Token = accessToken;
                         }

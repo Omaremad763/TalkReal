@@ -15,7 +15,7 @@ export class MessagingService {
   public isConnected = new BehaviorSubject<boolean>(false);
   createHubConnection(token: string) {
     this.hubConnection = new signalR.HubConnectionBuilder()
-      .withUrl(`https://localhost:7260/hubs/presence`, {
+      .withUrl(`/api/hubs/presence`, {
         accessTokenFactory: () => token,
         skipNegotiation: true,
         transport: signalR.HttpTransportType.WebSockets,

@@ -7,7 +7,7 @@ import * as messagedto from '../core-models';
   providedIn: 'root',
 })
 export class QraphQlService {
-  private readonly graphqlUrl = 'https://localhost:7260/graphql/';
+  private readonly graphqlUrl = '/api/graphql';
   constructor(private http: HttpClient) {}
   getOnlineUsers(): Observable<any[]> {
     const query = {
@@ -22,7 +22,7 @@ export class QraphQlService {
       }
     `,
     };
-    return this.http.post<any>(`${this.graphqlUrl}/getOnlineUsers`, query).pipe(
+    return this.http.post<any>(this.graphqlUrl, query).pipe(
       map((res) => {
         if (res.errors) {
           console.error('GraphQL Validation Errors:', res.errors);
@@ -53,7 +53,7 @@ export class QraphQlService {
     const variables = {
       input: chatHistoryDto,
     };
-    return this.http.post<any>(`${this.graphqlUrl}/getChatHistory`, { query, variables }).pipe(
+    return this.http.post<any>(this.graphqlUrl, { query, variables }).pipe(
       map((res) => {
         if (res.errors) {
           console.error('GraphQL Errors:', res.errors);

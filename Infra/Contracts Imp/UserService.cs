@@ -8,10 +8,11 @@ using Application.DTOS;
 
 using Domain.Entities;
 
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Infra.Contracts_Imp;
-public class UserService(IUnitofWork unitofwork) : IUserService
+public class UserService(IUnitofWork unitofwork, IConfiguration config) : IUserService
 {
     public async Task RegistertUser(RegisterDto dto)
     {
@@ -86,7 +87,7 @@ public class UserService(IUnitofWork unitofwork) : IUserService
     {
         return await unitofwork.UserRepo.DeleteImagetById(userid);
     }
-    private static string GenerateJwt(User user)
+    private  string GenerateJwt(User user)
     {
         var claims = new List<Claim>
         {
@@ -94,10 +95,9 @@ public class UserService(IUnitofWork unitofwork) : IUserService
             new (ClaimTypes.Email, user.Email!),
             new (ClaimTypes.Name, user.UserName!),
          };
-
-        var Issuer = Environment.GetEnvironmentVariable("SaasJWTIssuer");
-        var audience = Environment.GetEnvironmentVariable("SaasJWTAudience");
-        var JWTkey = Environment.GetEnvironmentVariable("SaasJwtKey");
+        var Issuer = config["Jwt:Issuer"];
+        var audience = config["Jwt:Audience"];
+        var JWTkey = config["Jwt:key"];
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JWTkey));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
@@ -108,8 +108,6 @@ public class UserService(IUnitofWork unitofwork) : IUserService
             expires: DateTime.UtcNow.AddHours(1),
             signingCredentials: creds
         );
-
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
-
 }

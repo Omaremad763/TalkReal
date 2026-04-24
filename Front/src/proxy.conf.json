@@ -1,0 +1,12 @@
+{
+  "/api": {
+    "target": "http://localhost:5223",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug",
+    "ws":true,
+    "pathRewrite": {
+      "^/api/graphql": "/graphql"
+    }
+  }
+}

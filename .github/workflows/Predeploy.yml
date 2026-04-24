@@ -1,0 +1,106 @@
+name: TalkReal CI/CD Pipeline
+
+on:
+  push:
+    branches: ["PreDeploy"]
+  pull_request:
+    branches: ["PreDeploy"]
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "9.0"
+
+      - name: Create .env File
+        run: |
+          touch .env
+          echo "DB_USER=${{ secrets.DB_USER }}" >> .env
+          echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
+          echo "DB_NAME=${{ secrets.DB_NAME }}" >> .env
+          echo "TalkRealdbConfig=${{ secrets.TALKREALDBCONFIG }}" >> .env
+          echo "JWT_KEY=${{ secrets.JWT_KEY }}" >> .env
+          echo "JWT_ISSUER=${{ secrets.JWT_ISSUER }}" >> .env
+          echo "JWT_AUDIENCE=${{ secrets.JWT_AUDIENCE }}" >> .env
+          echo "Cloudinary__CloudinaryName=${{ secrets.CLOUDINARYNAME }}" >> .env
+          echo "Cloudinary__CloudinaryApiKey=${{ secrets.CLOUDINARYAPIKEY }}" >> .env
+          echo "Cloudinary__CloudinaryApiSecret=${{ secrets.CLOUDINARYAPISECRET }}" >> .env
+      - name: Clean Docker System & Force Rebuild
+        run: |
+          echo -e "\e[33m [!] Purging old images and cache... \e[0m"
+          docker system prune -af
+          docker compose build --no-cache --pull
+
+      - name: Test Docker Compose Up
+        run: |
+          echo -e "\e[34m >>> Starting containers... \e[0m"
+          docker compose up -d
+          echo "Waiting for containers to be ready..."
+          for i in {1..12}; do
+            EXITED=$(docker ps -a -f status=exited -q | wc -l)  
+            if [ "$EXITED" -gt 0 ]; then
+              echo "Detected a failed container. Capturing diagnostics..."
+              break
+            fi
+            sleep 5
+          done
+          echo "Final status summary:"
+          docker compose ps -a
+
+          EXITED_IDS=$(docker ps -a -f status=exited -q)
+          if [ -n "$EXITED_IDS" ]; then
+          echo -e "\e[31m [X] ERROR: One or more containers failed! \e[0m"
+            echo "::group::Technical Post-Mortem (Inspect)"
+            docker inspect $EXITED_IDS --format 'Container: {{.Name}} | ExitCode: {{.State.ExitCode}} | Error: {{.State.Error}}'
+            echo "::endgroup::"
+            
+            echo "::group::Frontend Logs"
+            docker logs --tail 100 TalkReal_frontend_Angular          
+            echo "::endgroup::"
+            
+            echo "::group::API Logs"
+            docker logs --tail 100 TalkReal_Backend.Net
+            echo "::endgroup::"
+
+            echo "::group::Database Logs"
+            docker logs --tail 100 TakReal_db-postgres
+            echo "::endgroup::"
+            
+            exit 1
+          fi
+          echo -e "\e[32m [V] SUCCESS: All containers are up and healthy! \e[0m"
+
+      - name: Shutdown Test Environment
+        run: docker compose down
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and Push Backend
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Presentation/Dockerfile
+          push: true
+          tags: |
+            ${{ secrets.DOCKER_USERNAME }}/talkreal-backend:latest
+            ${{ secrets.DOCKER_USERNAME }}/talkreal-backend:${{ github.sha }}
+
+      - name: Build and Push Frontend
+        uses: docker/build-push-action@v5
+        with:
+          context: ./Front
+          file: ./Front/Dockerfile
+          push: true
+          tags: |
+            ${{ secrets.DOCKER_USERNAME }}/talkreal-frontend:latest
+            ${{ secrets.DOCKER_USERNAME }}/talkreal-frontend:${{ github.sha }}
