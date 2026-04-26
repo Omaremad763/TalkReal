@@ -34,9 +34,9 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
-    app.UseCors(policyName: "VercelPolicy");
     app.UseHttpsRedirection();
 }
+app.UseCors(policyName: "VercelPolicy");
 app.UseRouting();
 app.UseMiddleware<ExceptionMiddleware>();
 app.UseAuthentication();

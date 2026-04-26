@@ -13,4 +13,5 @@ public interface IUserRepo
     Task<List<User>> GetUserStatus(CancellationToken CT);
     Task<User?> GetUserByidAsync(Guid Id);
     Task<bool> DeleteImagetById(Guid userid);
+    Task<User?> GetUserByRefreshTokenAsync(string refreshToken);
 }

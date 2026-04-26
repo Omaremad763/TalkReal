@@ -42,6 +42,7 @@ export class ChatWindowComponent {
     this.QraphQlService.getOnlineUsers().subscribe({
       next: (res: messagedto.UserStatusDto[]) => {
         this.users = res;
+        this.updateReceiverHeader();
       },
     });
   }
@@ -105,6 +106,13 @@ export class ChatWindowComponent {
     const file = event.target.files[0];
     if (file) {
       this.selectedFile = file;
+    }
+  }
+
+  private updateReceiverHeader() {
+    const id = this.receiverid();
+    if (this.users.length > 0 && id) {
+      this.receiver = this.users.find((u) => u.userId === id) || null;
     }
   }
 }

@@ -1,4 +1,8 @@
-﻿namespace Application.DTOS;
+﻿using Domain.Entities;
+
+using HotChocolate;
+
+namespace Application.DTOS;
 public class UpdateUserStatusDto
 {
     public Guid UserId { get; set; }

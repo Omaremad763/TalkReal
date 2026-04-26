@@ -51,7 +51,7 @@ export class HeaderComponent implements OnInit {
   loadProfileImage(): void {
     if (!this.userId) return;
 
-    this.userService.GetImagetById(this.userId).subscribe({
+    this.userService.GetImageById(this.userId).subscribe({
       next: (res) => {
         if (res && res.imageURL) {
           this.ImageURL = `${res.imageURL}?t=${new Date().getTime()}`;

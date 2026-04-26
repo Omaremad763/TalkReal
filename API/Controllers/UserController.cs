@@ -21,8 +21,8 @@ public class UserController(IMediator mediator) : ControllerBase
     }
 
     [HttpGet]
-    [Route("GetImagetById/{id}")]
-    public async Task<IActionResult> GeImagetById(Guid id)
+    [Route("GetImageById/{id}")]
+    public async Task<IActionResult> GeImageById(Guid id)
     {
         var result = await mediator.Send(new GetUserImageQuery(id));
         var response = ApiResponse.Success(result);

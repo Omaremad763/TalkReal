@@ -93,3 +93,28 @@ public class OutboxMessageConfiguration : IEntityTypeConfiguration<OutboxMessage
             .HasDatabaseName("IX_OutboxMessages_Processing_Status");
     }
 }
+
+public class RefreshTokenConfiguration : IEntityTypeConfiguration<RefreshToken>
+{
+    public void Configure(EntityTypeBuilder<RefreshToken> builder)
+    {
+        builder.HasKey(rt => rt.Id);
+
+        builder.Property(rt => rt.Token)
+            .IsRequired()
+            .HasMaxLength(256);
+
+        builder.HasIndex(rt => rt.Token)
+            .IsUnique();
+
+        builder.HasOne(rt => rt.User)
+            .WithMany(u => u.RefreshTokens)            
+            .HasForeignKey(rt => rt.UserId)
+            .OnDelete(DeleteBehavior.Cascade);       
+
+        builder.Ignore(rt => rt.IsExpired);
+        builder.Ignore(rt => rt.IsActive);
+
+        builder.ToTable("RefreshTokens");
+    }
+}

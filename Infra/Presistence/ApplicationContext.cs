@@ -17,6 +17,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<Message> Messages { get; set; }
     public DbSet<OutboxMessage> OutboxMessages { get; set; }
     public DbSet<UserConversation> UserConversations { get; set; }
+    public DbSet<RefreshToken> RefreshTokens { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

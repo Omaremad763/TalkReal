@@ -7,5 +7,6 @@ public class User : IdentityUser<Guid>
 
     public bool IsOnline { get; set; }
     public string? ProfileImageUrl { get; set; }
+    public List<RefreshToken> RefreshTokens { get; set; } = new List<RefreshToken>();
 
 }

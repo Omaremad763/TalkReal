@@ -2,6 +2,7 @@
 
 using Domain.Entities;
 
+using Infra.Migrations;
 using Infra.Presistence;
 
 using Microsoft.AspNetCore.Identity;
@@ -40,14 +41,27 @@ public class UserRepo(UserManager<User> _userManager, ApplicationDbContext Conte
     }
 
     public async Task<bool> DeleteImagetById(Guid userid)
+
     {
         var getuser = await GetUserByidAsync(userid);
-        if (getuser != null)
+        if (getuser is null)
         {
             getuser.ProfileImageUrl = null;
             await Context.SaveChangesAsync();
             return true;
         }
         return false;
+    }
+
+    public async Task<User?> GetUserByRefreshTokenAsync(string refreshToken)
+    {
+        var user = await _userManager.Users
+             .Include(u => u.RefreshTokens)
+             .FirstOrDefaultAsync(u => u.RefreshTokens
+            .Any(r => r.Token == refreshToken
+              && r.Revoked == null
+              && r.Expires > DateTime.UtcNow)
+       );
+        return user??null;
     }
 }

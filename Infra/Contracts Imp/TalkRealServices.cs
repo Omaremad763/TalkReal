@@ -13,10 +13,12 @@ public class TalkRealServices(IUnitofWork unitofWork,
     IConfiguration config
     ) : ITalkRealServices
 {
-    public IUserService UseService => new UserService(unitofWork, config);
+    public IUserService UseService => new UserService(unitofWork);
 
     public IMessageService MessageService => new MessageService(unitofWork, CloudinaryService);
 
     public INotificationService NotificationService => new NotificationService(hubContext);
     public IAttachmentService AttachmentService => new AttachmentService(unitofWork, hubContext);
+
+    public ITokenService TokenService =>  new TokenService(unitofWork,config);
 }

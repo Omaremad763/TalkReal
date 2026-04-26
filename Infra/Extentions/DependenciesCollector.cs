@@ -88,6 +88,7 @@ public static class DependenciesCollector
                     ValidateIssuerSigningKey = true,
                     ValidIssuer = Issuer,
                     ValidAudience = audience,
+                    ClockSkew=TimeSpan.Zero,
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JWTkey)),
                     RoleClaimType = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role",
                     NameClaimType = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"

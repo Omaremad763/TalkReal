@@ -15,9 +15,9 @@ export class UserService {
   AddPhoto(file: FormData, userid: string): Observable<boolean> {
     return this.http.post<boolean>(`${this.baseUrl}/AddPhoto/${userid}`, file);
   }
-  GetImagetById(userid: string): Observable<any> {
+  GetImageById(userid: string): Observable<any> {
     return this.http
-      .get<ApiResponse<any>>(`${this.baseUrl}/GetImagetById/${userid}`)
+      .get<ApiResponse<any>>(`${this.baseUrl}/GetImageById/${userid}`)
       .pipe(map((res) => res.data));
   }
   DeleteImagetById(userid: string): Observable<boolean> {

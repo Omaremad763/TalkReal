@@ -8,6 +8,7 @@ public interface ITalkRealServices
     IMessageService MessageService { get; }
     INotificationService NotificationService { get; }
     IAttachmentService AttachmentService { get; }
+    ITokenService TokenService { get; }
 }
 
 
