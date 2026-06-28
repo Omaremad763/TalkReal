@@ -41,70 +41,39 @@
     
 
 ---
-
 # 📑 Table of Contents
 
-- 📖 Overview
-    
-- 🎯 Why This Project?
-    
-- 🚀 Project Goals
-    
-- 🧪 Learning Experiments
-    
-- ✨ Core Features
-    
-- 🖼️ Screenshots
-    
-- 🎥 Demo
-    
-- 🛠️ Technology Stack
-    
-- 🏗️ Architecture
-    
-- 🧱 High-Level Architecture
-    
-- 📁 Project Structure
-    
-- ⚙️ Backend Highlights
-    
-- 🎨 Frontend Highlights
-    
-- 🔐 Authentication
-    
-- 🗃️ Messaging Module
-    
-- 👤 Presence Module
-    
-- 📡 Communication Technologies
-    
-- 🐳 Docker
-    
-- 🚀 Getting Started
-    
-- 🔄 CI/CD
-    
-- 🌿 Branching Strategy
-    
-- 🧪 Learning Branches
-    
-- 🔐 Security
-    
-- 📦 Deployment
-    
-- 📈 Future Roadmap
-    
-- 💡 Lessons Learned
-    
-- ❤️ Engineering Journey
-    
-- 🤝 Contributing
-    
-- 📄 License
-    
-- 👨‍💻 Author
-    
-- ⭐ Support
+- [📖 Overview](#-overview)
+- [🎯 Why This Project?](#-why-this-project)
+- [🚀 Project Goals](#-project-goals)
+- [🧪 Learning Experiments](#-learning-experiments)
+- [✨ Core Features](#-core-features)
+- [🖼️ Screenshots](#-screenshots)
+- [🎥 Demo](#-demo)
+- [🛠️ Technology Stack](#-technology-stack)
+- [🏗️ Architecture](#-architecture)
+- [🧱 High-Level Architecture](#-high-level-architecture)
+- [📁 Project Structure](#-project-structure)
+- [⚙️ Backend Highlights](#-backend-highlights)
+- [🎨 Frontend Highlights](#-frontend-highlights)
+- [🔐 Authentication](#-authentication)
+- [🗃️ Messaging Module](#-messaging-module)
+- [👤 Presence Module](#-presence-module)
+- [📡 Communication Technologies](#-communication-technologies)
+- [🐳 Docker](#-docker)
+- [🚀 Getting Started](#-getting-started)
+- [🔄 CI/CD](#-cicd)
+- [🌿 Branching Strategy](#-branching-strategy)
+- [🧪 Learning / Experimental Features](#-learning--experimental-features)
+- [🔐 Security](#-security)
+- [📦 Deployment](#-deployment)
+- [📈 Future Roadmap](#-future-roadmap)
+- [💡 Lessons Learned](#-lessons-learned)
+- [❤️ Engineering Journey](#-Engineering-journey)
+- [🤝 Contributing](#-contributing)
+- [📄 License](#-license)
+- [👨‍💻 Author](#-author)
+- [⭐ Support](#-Support)
     
 
 ---
