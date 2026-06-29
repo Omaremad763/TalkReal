@@ -245,7 +245,7 @@ Instead of relying on a single communication style, TalkReal intentionally explo
 
 ## Login
 
-![Dashboard](docs/images/Login.png)
+![Dashboard](docs/images/Log.png)
 
 ---
 
